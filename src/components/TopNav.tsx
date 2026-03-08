@@ -4,13 +4,13 @@ import truvyLogo from "@/assets/truvy-logo.png";
 import { Home, ScanLine, Building2, Wallet, ShieldCheck, Smartphone } from "lucide-react";
 
 const tabs = [
-  { label: "Home", icon: Home },
-  { label: "Scan ID", icon: ScanLine },
-  { label: "Legitimuz — Issue", icon: Building2 },
-  { label: "User Wallet", icon: Wallet },
-  { label: "Any Bank — Verify", icon: ShieldCheck },
-  { label: "Try It Live", icon: Smartphone },
-];
+{ label: "Home", icon: Home },
+{ label: "Scan ID", icon: ScanLine },
+{ label: "Legitimuz — Issue", icon: Building2 },
+{ label: "User Wallet", icon: Wallet },
+{ label: "Any Bank — Verify", icon: ShieldCheck },
+{ label: "Try It Live", icon: Smartphone }];
+
 
 const TopNav = () => {
   const { state, setCurrentScreen } = useTruvy();
@@ -22,9 +22,9 @@ const TopNav = () => {
           {/* Logo */}
           <button
             onClick={() => setCurrentScreen(0)}
-            className="shrink-0 hover:opacity-80 transition-opacity"
-          >
-            <img src={truvyLogo} alt="TruVy" className="h-7 w-auto" />
+            className="shrink-0 hover:opacity-80 transition-opacity">
+            
+            <img alt="TruVy" className="h-7 w-auto" src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png" />
           </button>
 
           {/* Divider */}
@@ -41,16 +41,16 @@ const TopNav = () => {
                   onClick={() => setCurrentScreen(i)}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-all",
-                    isActive
-                      ? "text-foreground bg-muted/60"
-                      : "text-muted-foreground hover:text-foreground/80"
-                  )}
-                >
+                    isActive ?
+                    "text-foreground bg-muted/60" :
+                    "text-muted-foreground hover:text-foreground/80"
+                  )}>
+                  
                   <Icon size={14} strokeWidth={1.5} />
                   <span className="hidden lg:inline">{tab.label}</span>
                   <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
-                </button>
-              );
+                </button>);
+
             })}
           </div>
         </div>
@@ -60,11 +60,11 @@ const TopNav = () => {
       <div className="h-[1px] bg-border/30">
         <div
           className="h-full bg-primary/60 transition-all duration-700 ease-out"
-          style={{ width: `${((state.currentScreen + 1) / tabs.length) * 100}%` }}
-        />
+          style={{ width: `${(state.currentScreen + 1) / tabs.length * 100}%` }} />
+        
       </div>
-    </nav>
-  );
+    </nav>);
+
 };
 
 export default TopNav;
