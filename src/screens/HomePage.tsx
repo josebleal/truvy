@@ -309,10 +309,10 @@ const HomePage = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="text-center mb-16"
         >
-          <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+          <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
             How It Works
           </motion.p>
-          <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
+          <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground">
             Three Steps. Zero Documents Transmitted.
           </motion.h2>
         </motion.div>
