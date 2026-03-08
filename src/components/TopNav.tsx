@@ -1,10 +1,14 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { cn } from "@/lib/utils";
-import { Home, ScanLine } from "lucide-react";
+import { Home, ScanLine, BadgeCheck, Wallet, Building2, Smartphone, Lock } from "lucide-react";
 
 const tabs = [
   { label: "Home", icon: Home },
   { label: "Scan ID", icon: ScanLine },
+  { label: "Issue", icon: BadgeCheck },
+  { label: "User Wallet", icon: Wallet },
+  { label: "Any Bank — Verify", icon: Building2 },
+  { label: "Try It Live", icon: Smartphone },
 ];
 
 const TopNav = () => {
@@ -29,18 +33,26 @@ const TopNav = () => {
             {tabs.map((tab, i) => {
               const Icon = tab.icon;
               const isActive = state.currentScreen === i;
+              const isLocked = i > state.currentScreen && i > 0;
               return (
                 <button
                   key={i}
-                  onClick={() => setCurrentScreen(i)}
+                  onClick={() => !isLocked && setCurrentScreen(i)}
+                  disabled={isLocked}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
+                    "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
                     isActive
                       ? "text-foreground bg-muted/60"
+                      : isLocked
+                      ? "text-muted-foreground/30 cursor-not-allowed"
                       : "text-muted-foreground hover:text-foreground/80"
                   )}
                 >
-                  <Icon size={16} strokeWidth={1.5} />
+                  {isLocked ? (
+                    <Lock size={14} strokeWidth={1.5} className="text-muted-foreground/30" />
+                  ) : (
+                    <Icon size={16} strokeWidth={1.5} />
+                  )}
                   <span className="hidden lg:inline">{tab.label}</span>
                   <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
                 </button>
