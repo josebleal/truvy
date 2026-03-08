@@ -212,6 +212,7 @@ const ScanID = () => {
         setToken(data.token);
         setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
+        setAgeVerified(data.sharedClaims?.ageVerified || "");
         setCurrentScreen(2);
       } else {
         setManualError("Failed to issue credential. Please try again.");
