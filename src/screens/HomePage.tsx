@@ -2,7 +2,7 @@ import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Clock, Users, DollarSign, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import networkGlobe from "@/assets/network-globe.png";
+
 import digitalPassport from "@/assets/digital-passport.png";
 
 const fadeUp = {
