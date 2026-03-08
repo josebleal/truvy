@@ -408,8 +408,7 @@ const HomePage = () => {
               See It In Action
             </h2>
             <p className="text-muted-foreground mb-10 max-w-lg mx-auto text-lg leading-relaxed">
-              Walk through the full TruVy flow: scan an ID, issue a credential, view your wallet, 
-              verify with a bank, and test a forgery attack.
+              Walk through the full TruVy flow: scan an ID and issue a reusable digital credential.
             </p>
             <Button
               size="lg"
