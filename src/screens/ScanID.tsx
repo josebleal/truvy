@@ -19,7 +19,7 @@ const US_STATES = [
 ];
 
 const ScanID = () => {
-  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue } = useTruvy();
+  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue, setAgeVerified } = useTruvy();
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [detected, setDetected] = useState(false);
