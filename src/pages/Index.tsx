@@ -4,17 +4,23 @@ import Footer from "@/components/Footer";
 import HomePage from "@/screens/HomePage";
 import ScanID from "@/screens/ScanID";
 
-const screens = [HomePage, ScanID];
-
 const AppContent = () => {
   const { state } = useTruvy();
-  const Screen = screens[state.currentScreen] || HomePage;
+
+  const renderScreen = () => {
+    switch (state.currentScreen) {
+      case 1:
+        return <ScanID />;
+      default:
+        return <HomePage />;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <TopNav />
       <main className="flex-1">
-        <Screen />
+        {renderScreen()}
       </main>
       <Footer />
     </div>
