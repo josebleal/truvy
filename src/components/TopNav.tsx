@@ -46,7 +46,7 @@ const TopNav = () => {
                     "text-muted-foreground hover:text-foreground/80"
                   )}>
                   
-                  <Icon size={14} strokeWidth={1.5} />
+                  <Icon size={16} strokeWidth={1.5} />
                   <span className="hidden lg:inline">{tab.label}</span>
                   <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
                 </button>);

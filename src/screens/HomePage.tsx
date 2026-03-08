@@ -430,10 +430,10 @@ const HomePage = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-primary/[0.02]" />
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground mb-4">
               See It In Action
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-md mx-auto text-[15px] leading-relaxed">
+            <p className="text-muted-foreground mb-10 max-w-lg mx-auto text-lg leading-relaxed">
               Walk through the full TruVy flow: scan an ID, issue a credential, view your wallet, 
               verify with a bank, and test a forgery attack.
             </p>
