@@ -77,50 +77,58 @@ const ScanID = () => {
   };
 
   const handleFileUpload = async (file: File) => {
-    setUploadedFile(file);
-
-    const fullName = firstName.trim() && lastName.trim()
-      ? `${firstName.trim()} ${lastName.trim()}`
-      : "Document Upload";
-    setName(fullName);
-
-    if (docType === "driver_license") {
-      setLocationLabel("Issuing State");
-      setLocationValue(stateField);
-      setCountry("United States of America");
-    } else {
-      setLocationLabel("Document Country");
-      setLocationValue(country);
-      setCountry(country);
+    const allowedTypes = ["image/jpeg", "image/jpg", "application/pdf"];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError("Invalid file type. Please upload JPG, JPEG, or PDF.");
+      return;
     }
 
-    await runVerifyAnimation();
+    setUploadedFile(file);
+    setUploadError("");
+    setUploadLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("document", file);
       formData.append("documentType", docType);
 
       const issueRes = await fetch(`${API_BASE}/issue-from-document`, {
         method: "POST",
         body: formData,
       });
+
+      if (!issueRes.ok) {
+        throw new Error(`API error: ${issueRes.statusText}`);
+      }
+
       const issueData = await issueRes.json();
       if (issueData.token) {
         setToken(issueData.token);
         setQrBase64(issueData.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
         if (issueData.name) setName(issueData.name);
+        if (issueData.country) setCountry(issueData.country);
+        if (issueData.state) {
+          setLocationLabel("Issuing State");
+          setLocationValue(issueData.state);
+        }
         if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
-        setIssueComplete(true);
+        if (issueData.documentType) setDocumentType(issueData.documentType);
       } else {
-        setError("Failed to issue credential. Please try again.");
-        setVerifying(false);
+        setUploadError("Failed to issue credential. Please try again.");
       }
     } catch {
-      setError("Network error. Please try again.");
-      setVerifying(false);
+      setUploadError("Failed to upload document. Please try again.");
+    } finally {
+      setUploadLoading(false);
     }
+  };
+
+  const handleUploadReset = () => {
+    setUploadedFile(null);
+    setUploadError("");
+    setUploadLoading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleFileDrop = (e: React.DragEvent) => {
