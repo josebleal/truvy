@@ -1,20 +1,8 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ArrowRight, ShieldCheck, Copy, XCircle } from "lucide-react";
+import { CheckCircle, ArrowRight, ShieldCheck, Copy } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
-
-const calculateAge = (dob: string): number => {
-  const birth = new Date(dob);
-  const currentYear = 2026;
-  const now = new Date(currentYear, new Date().getMonth(), new Date().getDate());
-  let age = now.getFullYear() - birth.getFullYear();
-  const monthDiff = now.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
-};
 
 const IssuedCredential = () => {
   const { state, setCurrentScreen } = useTruvy();
@@ -25,9 +13,6 @@ const IssuedCredential = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const age = state.dateOfBirth ? calculateAge(state.dateOfBirth) : null;
-  const isDriverLicense = state.documentType === "driver_license";
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
@@ -62,20 +47,12 @@ const IssuedCredential = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Full Name</span>
-            <span className="text-foreground font-medium">{state.name.toUpperCase()}</span>
+            <span className="text-foreground font-medium">{state.name}</span>
           </div>
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
-            <span className="text-muted-foreground">Document Country</span>
-            <span className="text-foreground font-medium">
-              {isDriverLicense ? "UNITED STATES OF AMERICA" : (state.locationValue || state.country).toUpperCase()}
-            </span>
+            <span className="text-muted-foreground">{state.locationLabel || "Document Country"}</span>
+            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
           </div>
-          {isDriverLicense && (
-            <div className="flex justify-between p-3 rounded-lg bg-secondary">
-              <span className="text-muted-foreground">Issuing State</span>
-              <span className="text-foreground font-medium">{(state.locationValue || "").toUpperCase()}</span>
-            </div>
-          )}
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Issued At</span>
             <span className="text-foreground font-medium">
@@ -88,43 +65,12 @@ const IssuedCredential = () => {
               <CheckCircle size={14} /> Clear
             </span>
           </div>
-
-          {/* Age Verified section */}
-          {isDriverLicense && age !== null ? (
-            <>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
-                <span className="text-muted-foreground">Age Verified (18+)</span>
-                {age >= 18 ? (
-                  <span className="text-green-500 font-medium flex items-center gap-1">
-                    <CheckCircle size={14} /> 18+
-                  </span>
-                ) : (
-                  <span className="text-destructive font-medium flex items-center gap-1">
-                    <XCircle size={14} /> Under 18
-                  </span>
-                )}
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
-                <span className="text-muted-foreground">Age Verified (21+)</span>
-                {age >= 21 ? (
-                  <span className="text-green-500 font-medium flex items-center gap-1">
-                    <CheckCircle size={14} /> 21+
-                  </span>
-                ) : (
-                  <span className="text-destructive font-medium flex items-center gap-1">
-                    <XCircle size={14} /> Under 21
-                  </span>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
-              <span className="text-muted-foreground">Age Verified</span>
-              <span className="text-primary font-medium flex items-center gap-1">
-                <CheckCircle size={14} /> 18+
-              </span>
-            </div>
-          )}
+          <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
+            <span className="text-muted-foreground">Age Verified</span>
+            <span className="text-primary font-medium flex items-center gap-1">
+              <CheckCircle size={14} /> 18+
+            </span>
+          </div>
         </div>
       </motion.div>
 

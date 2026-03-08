@@ -1,66 +1,127 @@
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { CheckCircle, Loader2, XCircle, Upload } from "lucide-react";
+import { Upload, CheckCircle, Loader2, Camera, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
 
-const US_STATES = [
-  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-  "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-  "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-  "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-  "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-  "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-  "Wisconsin", "Wyoming",
-];
-
-const calculateAge = (dob: string): number => {
-  const birth = new Date(dob);
-  const currentYear = 2026;
-  const now = new Date(currentYear, new Date().getMonth(), new Date().getDate());
-  let age = now.getFullYear() - birth.getFullYear();
-  const monthDiff = now.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
-};
-
 const ScanID = () => {
-  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue, setDateOfBirth } = useTruvy();
-  const [docType, setDocType] = useState<"passport" | "driver_license">("passport");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [country, setCountryField] = useState("United States of America");
-  const [stateField, setStateField] = useState("Florida");
-  const [passportNumber, setPassportNumber] = useState("");
-  const [dob, setDob] = useState("");
+  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue } = useTruvy();
+  const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [detected, setDetected] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
-  const [issueComplete, setIssueComplete] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadLoading, setUploadLoading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [docType, setDocType] = useState<"passport" | "driver_license">("passport");
+
+  const handleReset = useCallback(() => {
+    setUploadedFile(null);
+    setProcessing(false);
+    setDetected(false);
+    setError("");
+  }, []);
 
   const handleDocTypeChange = (type: "passport" | "driver_license") => {
     setDocType(type);
     setDocumentType(type);
+    handleReset();
   };
 
-  const age = dob ? calculateAge(dob) : null;
+  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const runVerifyAnimation = async () => {
+    if (file.type === "application/pdf") {
+      setUploadedFile("pdf");
+    } else {
+      const reader = new FileReader();
+      reader.onload = (ev) => setUploadedFile(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+
+    setProcessing(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("document", file);
+      const docRes = await fetch(`${API_BASE}/issue-from-document`, {
+        method: "POST",
+        body: formData,
+      });
+      const docData = await docRes.json();
+      const extractedName = docData.documentFields?.name || "";
+      const extractedCountry = docData.documentFields?.country || "United States";
+      const extractedState = docData.documentFields?.state || "";
+
+      if (!extractedName) {
+        setError("Could not extract name from document. Please try again.");
+        setProcessing(false);
+        return;
+      }
+
+      setName(extractedName);
+      setCountry(extractedCountry);
+
+      // Set location label/value based on document type
+      if (docType === "driver_license") {
+        setLocationLabel("Issuing State");
+        setLocationValue(extractedState || extractedCountry);
+      } else {
+        setLocationLabel("Document Country");
+        setLocationValue(extractedCountry);
+      }
+
+      setProcessing(false);
+      setDetected(true);
+
+      // Auto-issue
+      setVerifying(true);
+      const steps = [
+        "Running biometric check...",
+        "Sanctions screening...",
+        "Age verification...",
+        "Issuing TruVy credential...",
+      ];
+      for (let i = 0; i < steps.length - 1; i++) {
+        setVerifyStep(i);
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+      setVerifyStep(steps.length - 1);
+
+      const issueRes = await fetch(`${API_BASE}/issue`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: extractedName,
+          country: extractedCountry,
+          documentType: docType,
+        }),
+      });
+      const issueData = await issueRes.json();
+      if (issueData.token) {
+        setToken(issueData.token);
+        setQrBase64(issueData.qrBase64 || "");
+        setIssuedAt(new Date().toISOString());
+        setCurrentScreen(2);
+      } else {
+        setError("Failed to issue credential. Please try again.");
+        setVerifying(false);
+      }
+    } catch {
+      setError("Network error. Please try again.");
+      setProcessing(false);
+      setVerifying(false);
+    }
+  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue]);
+
+  const handleProceed = async () => {
+    if (!detected) return;
+
     setVerifying(true);
     setError("");
-    setIssueComplete(false);
 
     const steps = [
       "Running biometric check...",
@@ -73,121 +134,24 @@ const ScanID = () => {
       setVerifyStep(i);
       await new Promise((r) => setTimeout(r, 1000));
     }
+
     setVerifyStep(steps.length - 1);
-  };
-
-  const handleFileUpload = async (file: File) => {
-    const allowedTypes = ["image/jpeg", "image/jpg", "application/pdf"];
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError("Invalid file type. Please upload JPG, JPEG, or PDF.");
-      return;
-    }
-
-    setUploadedFile(file);
-    setUploadError("");
-    setUploadLoading(true);
-
     try {
-      const formData = new FormData();
-      formData.append("document", file);
-      formData.append("documentType", docType);
-
-      const issueRes = await fetch(`${API_BASE}/issue-from-document`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!issueRes.ok) {
-        throw new Error(`API error: ${issueRes.statusText}`);
-      }
-
-      const issueData = await issueRes.json();
-       if (issueData.token) {
-         setToken(issueData.token);
-         setQrBase64(issueData.qrBase64 || "");
-         setIssuedAt(new Date().toISOString());
-         if (issueData.name) setName(issueData.name);
-         if (issueData.country) setCountry(issueData.country);
-         if (issueData.state) {
-           setLocationLabel("Issuing State");
-           setLocationValue(issueData.state);
-         }
-         if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
-         if (issueData.documentType) setDocumentType(issueData.documentType);
-         // Auto-redirect to Issue tab on successful upload
-         setCurrentScreen(2);
-       } else {
-         setUploadError("Failed to issue credential. Please try again.");
-       }
-    } catch {
-      setUploadError("Failed to upload document. Please try again.");
-    } finally {
-      setUploadLoading(false);
-    }
-  };
-
-  const handleUploadReset = () => {
-    setUploadedFile(null);
-    setUploadError("");
-    setUploadLoading(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const handleFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload(file);
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFileUpload(file);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !dob) return;
-
-    const fullName = `${firstName.trim()} ${lastName.trim()}`;
-    setName(fullName);
-    setDateOfBirth(dob);
-
-    if (docType === "driver_license") {
-      setLocationLabel("Issuing State");
-      setLocationValue(stateField);
-      setCountry("United States of America");
-    } else {
-      setLocationLabel("Document Country");
-      setLocationValue(country);
-      setCountry(country);
-    }
-
-    await runVerifyAnimation();
-
-    try {
-      const body: Record<string, string> = {
-        name: fullName,
-        documentType: docType,
-        dateOfBirth: dob,
-      };
-      if (docType === "passport") {
-        body.country = country;
-        body.documentNumber = passportNumber;
-      } else {
-        body.country = stateField;
-      }
-
-      const issueRes = await fetch(`${API_BASE}/issue`, {
+      const res = await fetch(`${API_BASE}/issue`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          name: state.name,
+          country: state.country,
+          documentType: docType,
+        }),
       });
-      const issueData = await issueRes.json();
-      if (issueData.token) {
-        setToken(issueData.token);
-        setQrBase64(issueData.qrBase64 || "");
+      const data = await res.json();
+      if (data.token) {
+        setToken(data.token);
+        setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
-        setIssueComplete(true);
+        setCurrentScreen(2);
       } else {
         setError("Failed to issue credential. Please try again.");
         setVerifying(false);
@@ -235,14 +199,6 @@ const ScanID = () => {
             </div>
           ))}
         </div>
-        {issueComplete && (
-          <Button
-            onClick={() => setCurrentScreen(2)}
-            className="w-full bg-green-600 hover:bg-green-700 text-white mt-4"
-          >
-            View Issued Credential
-          </Button>
-        )}
         {error && (
           <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center">
             {error}
@@ -252,12 +208,14 @@ const ScanID = () => {
     );
   }
 
+  const uploadLabel = docType === "passport" ? "Upload Passport Photo" : "Upload Driver's License";
+
   return (
     <div className="max-w-xl mx-auto py-8 px-4">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Verify Your Identity</h1>
         <p className="text-muted-foreground">
-          Upload a document or enter your details below to get verified
+          Two-factor verification: upload your document and complete a face scan
         </p>
       </div>
 
@@ -291,175 +249,142 @@ const ScanID = () => {
         </div>
       </div>
 
-      <div
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleFileDrop}
-        onClick={() => !uploadLoading && fileInputRef.current?.click()}
-        className={cn(
-          "card-surface rounded-xl p-8 border-2 border-dashed transition-colors mb-6 text-center",
-          uploadLoading ? "border-primary/50 cursor-wait" : "border-border hover:border-primary/50 cursor-pointer",
-          uploadError && "border-destructive"
-        )}
-      >
-        {uploadLoading ? (
-          <>
-            <Loader2 className="mx-auto mb-3 text-primary animate-spin" size={32} />
-            <p className="text-sm font-medium text-foreground">Processing document...</p>
-            {uploadedFile && <p className="text-xs text-muted-foreground mt-1">{uploadedFile.name}</p>}
-          </>
-        ) : uploadError ? (
-          <>
-            <XCircle className="mx-auto mb-3 text-destructive" size={32} />
-            <p className="text-sm font-medium text-destructive mb-2">{uploadError}</p>
+      <div className="space-y-6 mb-8">
+        {/* Step 1: Document Upload */}
+        <div className="card-surface rounded-xl p-6 border border-border">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Upload size={20} className="text-primary" />
+              {uploadLabel}
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4 ml-8">
+            {docType === "passport" ? "Passport photo page" : "Front of Driver's License"} (JPG, JPEG, PDF)
+          </p>
+
+          {!uploadedFile ? (
+            <label
+              htmlFor="id-upload"
+              className="flex flex-col items-center justify-center border-2 border-dashed border-primary/40 rounded-xl p-8 cursor-pointer hover:border-primary/70 transition-colors"
+            >
+              <Upload className="text-primary mb-2" size={36} />
+              <span className="text-sm text-muted-foreground">Click or drag to upload</span>
+              <span className="text-xs text-muted-foreground mt-1">JPG, JPEG, PDF</span>
+              <input
+                id="id-upload"
+                type="file"
+                accept=".jpg,.jpeg,.pdf,image/jpeg,application/pdf"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+            </label>
+          ) : (
+            <div className="space-y-4">
+              <div className="rounded-xl overflow-hidden border border-border">
+                {uploadedFile === "pdf" ? (
+                  <div className="w-full h-40 flex items-center justify-center bg-secondary">
+                    <span className="text-muted-foreground text-sm font-medium">PDF Document Uploaded</span>
+                  </div>
+                ) : (
+                  <img src={uploadedFile} alt="ID Preview" className="w-full h-40 object-cover" />
+                )}
+              </div>
+              {processing ? (
+                <div className="flex items-center gap-2 text-primary">
+                  <Loader2 className="animate-spin" size={16} />
+                  <span className="text-sm">Processing document...</span>
+                </div>
+              ) : error ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-destructive text-sm font-medium">
+                    <XCircle size={16} />
+                    {error}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    className="text-destructive border-destructive hover:bg-destructive/10"
+                  >
+                    <XCircle size={14} className="mr-1" /> Try Again
+                  </Button>
+                </div>
+              ) : detected ? (
+                <>
+                  <div className="flex items-center gap-2 text-success text-sm font-medium">
+                    <CheckCircle size={16} />
+                    Identity document detected
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between p-2 rounded bg-secondary">
+                      <span className="text-muted-foreground">Full Name</span>
+                      <span className="text-foreground font-medium">{state.name}</span>
+                    </div>
+                    <div className="flex justify-between p-2 rounded bg-secondary">
+                      <span className="text-muted-foreground">{state.locationLabel}</span>
+                      <span className="text-foreground font-medium">{state.locationValue}</span>
+                    </div>
+                    <div className="flex justify-between p-2 rounded bg-secondary">
+                      <span className="text-muted-foreground">ID Number</span>
+                      <span className="text-foreground font-medium">*******</span>
+                    </div>
+                    <div className="flex justify-between p-2 rounded bg-secondary">
+                      <span className="text-muted-foreground">Date of Birth</span>
+                      <span className="text-foreground font-medium">**/**/ ****</span>
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          )}
+        </div>
+
+        {/* Step 2: Face Scan (cosmetic only) */}
+        <div className="card-surface rounded-xl p-6 border border-border">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Camera size={20} className="text-primary" />
+              Face Scan
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4 ml-8">
+            Biometric verification to confirm your identity
+          </p>
+
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-8">
+            <div className="w-24 h-24 rounded-full border-4 border-muted-foreground/30 flex items-center justify-center mb-4">
+              <Camera className="text-muted-foreground" size={36} />
+            </div>
+            <span className="text-sm text-muted-foreground mb-4">Position your face in the frame</span>
             <Button
               type="button"
-              variant="outline"
-              size="sm"
-              onClick={(e) => { e.stopPropagation(); handleUploadReset(); }}
-              className="border-destructive text-destructive hover:bg-destructive/10"
+              className="bg-green-600 hover:bg-green-700 text-white px-6"
+              onClick={() => {}}
             >
-              Try Again
+              Start Face Scan
             </Button>
-          </>
-        ) : (
-          <>
-            <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
-            <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
-            <p className="text-xs text-muted-foreground">
-              Drag & drop or click to select — JPG, JPEG, or PDF
-            </p>
-            {uploadedFile && (
-              <p className="text-xs text-primary mt-2">✓ {uploadedFile.name}</p>
-            )}
-          </>
-        )}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".jpg,.jpeg,.pdf"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="flex-1 h-px bg-border" />
-        <span className="text-xs text-muted-foreground uppercase">or enter manually</span>
-        <div className="flex-1 h-px bg-border" />
-      </div>
-
-      {/* Manual Entry Form */}
-      <form onSubmit={handleSubmit} className="card-surface rounded-xl p-6 border border-border space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">First Name</label>
-            <Input
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="John"
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Last Name</label>
-            <Input
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Doe"
-              required
-            />
           </div>
         </div>
-
-        {docType === "passport" ? (
-          <>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">Country</label>
-              <Input
-                value={country}
-                onChange={(e) => setCountryField(e.target.value)}
-                placeholder="United States of America"
-                required
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">Passport Number</label>
-              <Input
-                value={passportNumber}
-                onChange={(e) => setPassportNumber(e.target.value)}
-                placeholder="AB1234567"
-                required
-              />
-            </div>
-          </>
-        ) : (
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">State</label>
-            <Select value={stateField} onValueChange={setStateField}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a state" />
-              </SelectTrigger>
-              <SelectContent>
-                {US_STATES.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-foreground">Date of Birth</label>
-          <Input
-            type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            required
-          />
-        </div>
-
-        {/* Age Restriction badges for Driver's License */}
-        {docType === "driver_license" && age !== null && (
-          <div className="space-y-2 p-3 rounded-lg bg-secondary">
-            <p className="text-sm font-medium text-foreground mb-2">Age Restriction</p>
-            <div className="flex items-center gap-2">
-              <Badge className={age >= 18 ? "bg-green-600 text-white border-green-600" : "bg-destructive text-destructive-foreground border-destructive"}>
-                18+
-              </Badge>
-              {age >= 18 ? (
-                <CheckCircle size={16} className="text-green-500" />
-              ) : (
-                <XCircle size={16} className="text-destructive" />
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge className={age >= 21 ? "bg-green-600 text-white border-green-600" : "bg-destructive text-destructive-foreground border-destructive"}>
-                21+
-              </Badge>
-              {age >= 21 ? (
-                <CheckCircle size={16} className="text-green-500" />
-              ) : (
-                <XCircle size={16} className="text-destructive" />
-              )}
-            </div>
-          </div>
-        )}
-
-        <Button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
-          disabled={!firstName.trim() || !lastName.trim() || !dob}
-        >
-          Verify & Issue Credential
-        </Button>
-      </form>
+      </div>
 
       {error && (
-        <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center mt-6">
+        <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center mb-6">
           {error}
         </div>
       )}
+
+      <div className="flex justify-center">
+        <Button
+          size="lg"
+          onClick={handleProceed}
+          disabled={!detected}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base"
+        >
+          Verify & Issue Credential →
+        </Button>
+      </div>
     </div>
   );
 };

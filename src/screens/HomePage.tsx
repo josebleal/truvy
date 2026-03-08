@@ -2,7 +2,7 @@ import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Clock, Users, DollarSign, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck } from "lucide-react";
 import { motion } from "framer-motion";
-
+import networkGlobe from "@/assets/network-globe.png";
 import digitalPassport from "@/assets/digital-passport.png";
 
 const fadeUp = {
@@ -222,7 +222,7 @@ const HomePage = () => {
       {/* Our Story */}
       <section className="border-y border-border/40">
         <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-3xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -254,6 +254,22 @@ const HomePage = () => {
                   in the world accepts it, without ever seeing your raw documents.
                 </p>
               </motion.div>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              custom={1}
+              variants={scaleIn}
+              className="relative"
+            >
+              <img
+                src={networkGlobe}
+                alt="Global identity network"
+                className="w-full rounded-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-l from-background/40 via-transparent to-transparent rounded-2xl" />
             </motion.div>
           </div>
         </div>
@@ -308,7 +324,7 @@ const HomePage = () => {
                 className="card-surface rounded-xl p-8 group hover:border-primary/15 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-3xl font-black font-display text-primary/60 group-hover:text-primary transition-colors">{item.step}</span>
+                  <span className="text-3xl font-black font-display text-muted/80 group-hover:text-primary/30 transition-colors">{item.step}</span>
                   <div className="w-9 h-9 rounded-lg bg-primary/[0.08] flex items-center justify-center group-hover:bg-primary/[0.12] transition-colors">
                     <Icon className="text-primary" size={18} />
                   </div>

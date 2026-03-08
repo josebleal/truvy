@@ -1,24 +1,10 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ShieldCheck, CheckCircle, Wallet, XCircle } from "lucide-react";
+import { ArrowRight, ShieldCheck, CheckCircle, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
-
-const calculateAge = (dob: string): number => {
-  const birth = new Date(dob);
-  const currentYear = 2026;
-  const now = new Date(currentYear, new Date().getMonth(), new Date().getDate());
-  let age = now.getFullYear() - birth.getFullYear();
-  const monthDiff = now.getMonth() - birth.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
-};
 
 const UserWallet = () => {
   const { state, setCurrentScreen } = useTruvy();
-  const isDriverLicense = state.documentType === "driver_license";
-  const age = state.dateOfBirth ? calculateAge(state.dateOfBirth) : null;
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
@@ -58,20 +44,12 @@ const UserWallet = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Holder</span>
-            <span className="text-foreground font-medium">{state.name.toUpperCase()}</span>
+            <span className="text-foreground font-medium">{state.name}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Document Country</span>
-            <span className="text-foreground font-medium">
-              {isDriverLicense ? "UNITED STATES OF AMERICA" : (state.locationValue || state.country).toUpperCase()}
-            </span>
+            <span className="text-muted-foreground">{state.locationLabel || "Document Country"}</span>
+            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
           </div>
-          {isDriverLicense && (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Issuing State</span>
-              <span className="text-foreground font-medium">{(state.locationValue || "").toUpperCase()}</span>
-            </div>
-          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Issued</span>
             <span className="text-foreground font-medium">
@@ -82,37 +60,10 @@ const UserWallet = () => {
             <span className="text-muted-foreground">Sanctions</span>
             <span className="text-primary font-medium">✓ Clear</span>
           </div>
-
-          {/* Age Verified */}
-          {isDriverLicense && age !== null ? (
-            <>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Age (18+)</span>
-                {age >= 18 ? (
-                  <span className="text-green-500 font-medium">✓ 18+</span>
-                ) : (
-                  <span className="text-destructive font-medium flex items-center gap-1">
-                    <XCircle size={12} /> Under 18
-                  </span>
-                )}
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Age (21+)</span>
-                {age >= 21 ? (
-                  <span className="text-green-500 font-medium">✓ 21+</span>
-                ) : (
-                  <span className="text-destructive font-medium flex items-center gap-1">
-                    <XCircle size={12} /> Under 21
-                  </span>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Age Verified</span>
-              <span className="text-primary font-medium">✓ 18+</span>
-            </div>
-          )}
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Age Verified</span>
+            <span className="text-primary font-medium">✓ 18+</span>
+          </div>
         </div>
 
         <div className="mt-6 pt-4 border-t border-border/50">

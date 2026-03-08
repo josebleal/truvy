@@ -39,12 +39,10 @@ const AppContent = () => {
   );
 };
 
-const Index = () => {
-  return (
-    <TruvyProvider>
-      <AppContent />
-    </TruvyProvider>
-  );
-};
+const Index = () => (
+  <TruvyProvider>
+    <AppContent />
+  </TruvyProvider>
+);
 
 export default Index;
