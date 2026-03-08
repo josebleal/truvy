@@ -46,6 +46,8 @@ const ScanID = () => {
   const [error, setError] = useState("");
   const [issueComplete, setIssueComplete] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDocTypeChange = (type: "passport" | "driver_license") => {
