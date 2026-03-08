@@ -227,8 +227,8 @@ const HomePage = () => {
                 className="card-surface rounded-xl p-6 text-center group hover:border-primary/20 transition-colors duration-300"
               >
                 <Icon className="text-primary mx-auto mb-3 opacity-50 group-hover:opacity-80 transition-opacity" size={18} />
-                <p className="text-2xl md:text-3xl font-bold font-display text-foreground mb-2">{stat.value}</p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">{stat.desc}</p>
+                <p className="text-3xl md:text-4xl font-bold font-display text-foreground mb-2">{stat.value}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{stat.desc}</p>
               </motion.div>
             );
           })}
