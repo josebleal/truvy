@@ -78,7 +78,7 @@ const ScanID = () => {
         setToken(data.token);
         setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
-        setCurrentScreen(2); // Go to UserWallet
+        setCurrentScreen(2); // Go to IssuedCredential
       } else {
         setError("Failed to issue credential. Please try again.");
         setVerifying(false);
