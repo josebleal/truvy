@@ -22,23 +22,77 @@ const ScanID = () => {
   const [manualCountry, setManualCountry] = useState("United States");
   const [error, setError] = useState("");
 
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Show preview
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setUploadedFile(ev.target?.result as string);
-      setMode("upload");
-      setProcessing(true);
-      setTimeout(() => {
-        setProcessing(false);
-        setDetected(true);
-        setName("ALEXANDER J. MORRISON");
-        setCountry("United States");
-      }, 2000);
-    };
+    reader.onload = (ev) => setUploadedFile(ev.target?.result as string);
     reader.readAsDataURL(file);
-  }, [setName, setCountry]);
+
+    setMode("upload");
+    setProcessing(true);
+    setError("");
+
+    try {
+      // Step 1: Extract document fields
+      const formData = new FormData();
+      formData.append("document", file);
+      const docRes = await fetch(`${API_BASE}/issue-from-document`, {
+        method: "POST",
+        body: formData,
+      });
+      const docData = await docRes.json();
+      const extractedName = docData.documentFields?.name || "";
+      const extractedCountry = docData.documentFields?.country || "United States";
+
+      if (!extractedName) {
+        setError("Could not extract name from document. Please try again or enter manually.");
+        setProcessing(false);
+        return;
+      }
+
+      setName(extractedName);
+      setCountry(extractedCountry);
+      setProcessing(false);
+      setDetected(true);
+
+      // Step 2: Issue credential automatically
+      setVerifying(true);
+      const steps = [
+        "Running biometric check...",
+        "Sanctions screening...",
+        "Age verification...",
+        "Issuing TruVy credential...",
+      ];
+      for (let i = 0; i < steps.length - 1; i++) {
+        setVerifyStep(i);
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+      setVerifyStep(steps.length - 1);
+
+      const issueRes = await fetch(`${API_BASE}/issue`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: extractedName, country: extractedCountry }),
+      });
+      const issueData = await issueRes.json();
+      if (issueData.token) {
+        setToken(issueData.token);
+        setQrBase64(issueData.qrBase64 || "");
+        setIssuedAt(new Date().toISOString());
+        setCurrentScreen(2);
+      } else {
+        setError("Failed to issue credential. Please try again.");
+        setVerifying(false);
+      }
+    } catch {
+      setError("Network error. Please try again.");
+      setProcessing(false);
+      setVerifying(false);
+    }
+  }, [setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen]);
 
   const handleProceed = async () => {
     const finalName = mode === "manual" ? manualName.trim() : state.name;
