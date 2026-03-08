@@ -64,7 +64,7 @@ export const TruvyProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <TruvyContext.Provider
-      value={{ state, setName, setCountry, setToken, setSessionId, setQrBase64, setCurrentScreen, setIssuedAt, setDocumentType, setLocationLabel, setLocationValue, resetState }}
+      value={{ state, setName, setCountry, setToken, setSessionId, setQrBase64, setCurrentScreen, setIssuedAt, setDocumentType, setLocationLabel, setLocationValue, setAgeVerified, resetState }}
     >
       {children}
     </TruvyContext.Provider>
