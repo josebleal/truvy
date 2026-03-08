@@ -8,6 +8,9 @@ interface TruvyState {
   qrBase64: string;
   currentScreen: number;
   issuedAt: string;
+  documentType: "passport" | "driver_license";
+  locationLabel: string;
+  locationValue: string;
 }
 
 interface TruvyContextType {
@@ -19,6 +22,9 @@ interface TruvyContextType {
   setQrBase64: (qr: string) => void;
   setCurrentScreen: (screen: number) => void;
   setIssuedAt: (date: string) => void;
+  setDocumentType: (type: "passport" | "driver_license") => void;
+  setLocationLabel: (label: string) => void;
+  setLocationValue: (value: string) => void;
   resetState: () => void;
 }
 
@@ -30,6 +36,9 @@ const initialState: TruvyState = {
   qrBase64: "",
   currentScreen: 0,
   issuedAt: "",
+  documentType: "passport",
+  locationLabel: "Document Country",
+  locationValue: "",
 };
 
 const TruvyContext = createContext<TruvyContextType | undefined>(undefined);
@@ -44,11 +53,14 @@ export const TruvyProvider = ({ children }: { children: ReactNode }) => {
   const setQrBase64 = (qr: string) => setState((s) => ({ ...s, qrBase64: qr }));
   const setCurrentScreen = (screen: number) => setState((s) => ({ ...s, currentScreen: screen }));
   const setIssuedAt = (date: string) => setState((s) => ({ ...s, issuedAt: date }));
+  const setDocumentType = (type: "passport" | "driver_license") => setState((s) => ({ ...s, documentType: type }));
+  const setLocationLabel = (label: string) => setState((s) => ({ ...s, locationLabel: label }));
+  const setLocationValue = (value: string) => setState((s) => ({ ...s, locationValue: value }));
   const resetState = () => setState(initialState);
 
   return (
     <TruvyContext.Provider
-      value={{ state, setName, setCountry, setToken, setSessionId, setQrBase64, setCurrentScreen, setIssuedAt, resetState }}
+      value={{ state, setName, setCountry, setToken, setSessionId, setQrBase64, setCurrentScreen, setIssuedAt, setDocumentType, setLocationLabel, setLocationValue, resetState }}
     >
       {children}
     </TruvyContext.Provider>
