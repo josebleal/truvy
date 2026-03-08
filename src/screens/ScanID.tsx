@@ -374,17 +374,6 @@ const ScanID = () => {
           {error}
         </div>
       )}
-
-      <div className="flex justify-center">
-        <Button
-          size="lg"
-          onClick={handleProceed}
-          disabled={!detected}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base"
-        >
-          Verify & Issue Credential →
-        </Button>
-      </div>
     </div>
   );
 };
