@@ -157,8 +157,8 @@ const HomePage = () => {
               <div className="w-11 h-11 rounded-lg bg-primary/[0.08] flex items-center justify-center mb-5">
                 <Building2 className="text-primary" size={20} />
               </div>
-              <h3 className="text-lg font-bold font-display text-foreground mb-2">Banks &amp; Financial Institutions</h3>
-              <p className="text-[14px] text-muted-foreground leading-relaxed mb-4">
+              <h3 className="text-xl font-bold font-display text-foreground mb-3">Banks &amp; Financial Institutions</h3>
+              <p className="text-base text-muted-foreground leading-relaxed mb-4">
                 Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials 
                 from any TruVy issuer and eliminate redundant KYC checks. Stop losing customers to 
                 slow verification processes.
