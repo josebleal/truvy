@@ -337,6 +337,111 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Real Story */}
+      <section className="border-y border-border/40">
+        <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center mb-16"
+          >
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              Real Story. Real Impact.
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-4">
+              One Identity. Two Continents.{" "}
+              <span className="gradient-text">Zero Friction.</span>
+            </motion.h2>
+            <motion.p custom={2} variants={fadeUp} className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Maria verified her identity once. TruVy did the rest.
+            </motion.p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-4 gap-0 items-start">
+            {[
+              {
+                emoji: "🇧🇷",
+                bank: "Nubank · Brazil",
+                title: "Identity Verified",
+                desc: "Maria opens her Nubank account in São Paulo. Nubank runs full KYC — passport scan, liveness check, sanctions screening.",
+                badge: "95 days of KYC work · Done once",
+              },
+              {
+                icon: ShieldCheck,
+                bank: "TruVy",
+                title: "Credential Issued",
+                desc: "TruVy issues a cryptographically signed credential. RSA-2048 encrypted. Her raw documents are never stored or transmitted.",
+                badge: "Zero raw documents stored",
+              },
+              {
+                emoji: "✈️",
+                bank: "Maria moves to the US",
+                title: "New Country. Same Identity.",
+                desc: "Six months later, Maria lands in New York and needs a US bank account. Most immigrants wait weeks. Maria opens her TruVy app.",
+                badge: "Avg wait: 3–6 weeks · Without TruVy",
+              },
+              {
+                emoji: "🏦",
+                bank: "Bank of America · USA",
+                title: "Account Opened Instantly",
+                desc: "BofA receives Maria's TruVy credential. Signature verified in milliseconds. Account approved. Documents received: NONE.",
+                badge: "Time to open: 2 minutes ✅",
+              },
+            ].map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                custom={i}
+                variants={fadeUp}
+                className="relative flex flex-col items-center text-center"
+              >
+                {/* Arrow between steps */}
+                {i > 0 && (
+                  <div className="hidden md:block absolute -left-3 top-8 text-primary text-2xl font-bold select-none">
+                    →
+                  </div>
+                )}
+
+                <div className="card-surface rounded-xl p-6 w-full group hover:border-primary/15 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-xl bg-primary/[0.08] flex items-center justify-center mx-auto mb-4">
+                    {step.icon ? (
+                      <step.icon className="text-primary" size={22} />
+                    ) : (
+                      <span className="text-2xl">{step.emoji}</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] font-semibold text-primary/70 uppercase tracking-wider mb-2">{step.bank}</p>
+                  <h3 className="text-base font-bold font-display text-foreground mb-2">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{step.desc}</p>
+                  <span className="inline-block text-[10px] font-medium text-primary bg-primary/[0.06] border border-primary/10 rounded-full px-3 py-1">
+                    {step.badge}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.blockquote
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            custom={0}
+            variants={fadeUp}
+            className="mt-16 text-center max-w-3xl mx-auto"
+          >
+            <p className="text-base md:text-lg italic text-primary/80 leading-relaxed">
+              "I verified once with Nubank. Six months later, I walked into Bank of America and was approved in 2 minutes. No paperwork. No waiting."
+            </p>
+            <cite className="block mt-4 text-sm text-muted-foreground not-italic font-medium">
+              — Maria S., USF International Student
+            </cite>
+          </motion.blockquote>
+        </div>
+      </section>
+
       {/* Digital Passport */}
       <section className="border-y border-border/40">
         <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
