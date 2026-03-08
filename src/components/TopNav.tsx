@@ -24,7 +24,7 @@ const TopNav = () => {
             onClick={() => setCurrentScreen(0)}
             className="shrink-0 hover:opacity-80 transition-opacity">
             
-            <img alt="TruVy" className="h-7 w-auto" src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png" />
+            <img alt="TruVy" className="h-8 w-auto" src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png" />
           </button>
 
           {/* Divider */}
@@ -40,13 +40,13 @@ const TopNav = () => {
                   key={i}
                   onClick={() => setCurrentScreen(i)}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-all",
+                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
                     isActive ?
                     "text-foreground bg-muted/60" :
                     "text-muted-foreground hover:text-foreground/80"
                   )}>
                   
-                  <Icon size={14} strokeWidth={1.5} />
+                  <Icon size={16} strokeWidth={1.5} />
                   <span className="hidden lg:inline">{tab.label}</span>
                   <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
                 </button>);

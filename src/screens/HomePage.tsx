@@ -68,7 +68,7 @@ const HomePage = () => {
                 animate="visible"
                 custom={1}
                 variants={fadeUp}
-                className="text-[2.75rem] md:text-[3.5rem] lg:text-[4rem] font-bold font-display text-foreground mb-6 leading-[1.08] tracking-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-foreground mb-6 leading-[1.1] tracking-tight"
               >
                 Verify Once.{" "}
                 <span className="gradient-text">Use Anywhere.</span>
@@ -79,7 +79,7 @@ const HomePage = () => {
                 animate="visible"
                 custom={2}
                 variants={fadeUp}
-                className="text-base md:text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed"
               >
                 Get verified once with a trusted issuer and share your credentials 
                 with any bank in the world, without ever transmitting raw documents.
@@ -137,10 +137,10 @@ const HomePage = () => {
             viewport={{ once: true, margin: "-80px" }}
             className="text-center mb-14"
           >
-            <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+            <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
               Who We Serve
             </motion.p>
-            <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
+            <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground">
               Built for the Financial Ecosystem
             </motion.h2>
           </motion.div>
@@ -157,8 +157,8 @@ const HomePage = () => {
               <div className="w-11 h-11 rounded-lg bg-primary/[0.08] flex items-center justify-center mb-5">
                 <Building2 className="text-primary" size={20} />
               </div>
-              <h3 className="text-lg font-bold font-display text-foreground mb-2">Banks &amp; Financial Institutions</h3>
-              <p className="text-[14px] text-muted-foreground leading-relaxed mb-4">
+              <h3 className="text-xl font-bold font-display text-foreground mb-3">Banks &amp; Financial Institutions</h3>
+              <p className="text-base text-muted-foreground leading-relaxed mb-4">
                 Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials 
                 from any TruVy issuer and eliminate redundant KYC checks. Stop losing customers to 
                 slow verification processes.
@@ -181,8 +181,8 @@ const HomePage = () => {
               <div className="w-11 h-11 rounded-lg bg-primary/[0.08] flex items-center justify-center mb-5">
                 <BadgeCheck className="text-primary" size={20} />
               </div>
-              <h3 className="text-lg font-bold font-display text-foreground mb-2">Identity Issuers (like Jumio)</h3>
-              <p className="text-[14px] text-muted-foreground leading-relaxed mb-4">
+              <h3 className="text-xl font-bold font-display text-foreground mb-3">Identity Issuers (like Jumio)</h3>
+              <p className="text-base text-muted-foreground leading-relaxed mb-4">
                 Become a trusted credential issuer on the TruVy network. Sign portable 
                 credentials that any bank worldwide can verify instantly. Expand your reach 
                 beyond one-time verification into a recurring trust network.
@@ -205,10 +205,10 @@ const HomePage = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="text-center mb-14"
         >
-          <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+          <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
             The Problem
           </motion.p>
-          <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
+          <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground">
             Identity Verification is Broken
           </motion.h2>
         </motion.div>
@@ -227,8 +227,8 @@ const HomePage = () => {
                 className="card-surface rounded-xl p-6 text-center group hover:border-primary/20 transition-colors duration-300"
               >
                 <Icon className="text-primary mx-auto mb-3 opacity-50 group-hover:opacity-80 transition-opacity" size={18} />
-                <p className="text-2xl md:text-3xl font-bold font-display text-foreground mb-2">{stat.value}</p>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">{stat.desc}</p>
+                <p className="text-3xl md:text-4xl font-bold font-display text-foreground mb-2">{stat.value}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{stat.desc}</p>
               </motion.div>
             );
           })}
@@ -254,13 +254,13 @@ const HomePage = () => {
               whileInView="visible"
               viewport={{ once: true, margin: "-80px" }}
             >
-              <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
                 Our Story
               </motion.p>
-              <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground mb-8">
+              <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-8">
                 Why We Built TruVy
               </motion.h2>
-              <motion.div custom={2} variants={fadeUp} className="space-y-5 text-muted-foreground text-[15px] leading-[1.75]">
+              <motion.div custom={2} variants={fadeUp} className="space-y-5 text-muted-foreground text-base md:text-lg leading-[1.8]">
                 <p>
                   As international students, we experienced firsthand the frustrating reality of opening 
                   a bank account in a new country. Every time we moved for school, work, or life, we repeated 
@@ -309,10 +309,10 @@ const HomePage = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="text-center mb-16"
         >
-          <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+          <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
             How It Works
           </motion.p>
-          <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
+          <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground">
             Three Steps. Zero Documents Transmitted.
           </motion.h2>
         </motion.div>
@@ -355,8 +355,8 @@ const HomePage = () => {
                     <Icon className="text-primary" size={18} />
                   </div>
                 </div>
-                <h3 className="text-base font-bold font-display text-foreground mb-3">{item.title}</h3>
-                <p className="text-[13px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="text-lg font-bold font-display text-foreground mb-3">{item.title}</h3>
+                <p className="text-base text-muted-foreground leading-relaxed">{item.desc}</p>
               </motion.div>
             );
           })}
@@ -388,14 +388,14 @@ const HomePage = () => {
               viewport={{ once: true, margin: "-80px" }}
               className="order-1 lg:order-2"
             >
-              <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">
                 The Product
               </motion.p>
-              <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground mb-6">
+              <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-6">
                 Your Digital Identity,{" "}
                 <span className="gradient-text">Always With You</span>
               </motion.h2>
-              <motion.div custom={2} variants={fadeUp} className="space-y-4 text-[15px] text-muted-foreground leading-[1.75]">
+              <motion.div custom={2} variants={fadeUp} className="space-y-4 text-base md:text-lg text-muted-foreground leading-[1.8]">
                 <p>
                   The TruVy Passport is a cryptographically signed credential that lives in your digital wallet. 
                   It contains verified claims about your identity, but never your raw documents.
@@ -430,10 +430,10 @@ const HomePage = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-primary/[0.02]" />
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold font-display text-foreground mb-4">
               See It In Action
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-md mx-auto text-[15px] leading-relaxed">
+            <p className="text-muted-foreground mb-10 max-w-lg mx-auto text-lg leading-relaxed">
               Walk through the full TruVy flow: scan an ID, issue a credential, view your wallet, 
               verify with a bank, and test a forgery attack.
             </p>
