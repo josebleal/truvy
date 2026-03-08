@@ -1,42 +1,37 @@
 import { useState, useCallback } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Upload, FileText, CheckCircle, Loader2 } from "lucide-react";
+import { Upload, CheckCircle, Loader2, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
 
-const countries = ["United States", "Brazil", "United Kingdom", "Canada", "Mexico", "Germany", "Japan", "Australia", "India", "Nigeria"];
-
 const ScanID = () => {
   const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen } = useTruvy();
-  const [mode, setMode] = useState<"choose" | "upload" | "manual">("choose");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [detected, setDetected] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
-  const [manualName, setManualName] = useState("");
-  const [manualCountry, setManualCountry] = useState("United States");
   const [error, setError] = useState("");
 
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show preview
-    const reader = new FileReader();
-    reader.onload = (ev) => setUploadedFile(ev.target?.result as string);
-    reader.readAsDataURL(file);
+    // Show preview for images, placeholder for PDFs
+    if (file.type === "application/pdf") {
+      setUploadedFile("pdf");
+    } else {
+      const reader = new FileReader();
+      reader.onload = (ev) => setUploadedFile(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
 
-    setMode("upload");
     setProcessing(true);
     setError("");
 
     try {
-      // Step 1: Extract document fields
       const formData = new FormData();
       formData.append("document", file);
       const docRes = await fetch(`${API_BASE}/issue-from-document`, {
@@ -48,7 +43,7 @@ const ScanID = () => {
       const extractedCountry = docData.documentFields?.country || "United States";
 
       if (!extractedName) {
-        setError("Could not extract name from document. Please try again or enter manually.");
+        setError("Could not extract name from document. Please try again.");
         setProcessing(false);
         return;
       }
@@ -58,7 +53,6 @@ const ScanID = () => {
       setProcessing(false);
       setDetected(true);
 
-      // Step 2: Issue credential automatically
       setVerifying(true);
       const steps = [
         "Running biometric check...",
@@ -95,14 +89,7 @@ const ScanID = () => {
   }, [setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen]);
 
   const handleProceed = async () => {
-    const finalName = mode === "manual" ? manualName.trim() : state.name;
-    const finalCountry = mode === "manual" ? manualCountry : state.country;
-
-    if (mode === "manual") {
-      if (!finalName) return;
-      setName(finalName);
-      setCountry(finalCountry);
-    }
+    if (!detected) return;
 
     setVerifying(true);
     setError("");
@@ -119,20 +106,19 @@ const ScanID = () => {
       await new Promise((r) => setTimeout(r, 1000));
     }
 
-    // Final step: call the /issue API
     setVerifyStep(steps.length - 1);
     try {
       const res = await fetch(`${API_BASE}/issue`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: finalName, country: finalCountry }),
+        body: JSON.stringify({ name: state.name, country: state.country }),
       });
       const data = await res.json();
       if (data.token) {
         setToken(data.token);
         setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
-        setCurrentScreen(2); // Go to IssuedCredential
+        setCurrentScreen(2);
       } else {
         setError("Failed to issue credential. Please try again.");
         setVerifying(false);
@@ -142,8 +128,6 @@ const ScanID = () => {
       setVerifying(false);
     }
   };
-
-  const canProceed = mode === "upload" ? detected : mode === "manual" ? manualName.trim().length > 0 : false;
 
   if (verifying) {
     const steps = [
@@ -192,29 +176,26 @@ const ScanID = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="max-w-xl mx-auto py-8 px-4">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Verify Your Identity</h1>
         <p className="text-muted-foreground">
-          Scan or enter your info — we'll verify and issue your credential
+          Two-factor verification: upload your document and complete a face scan
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        {/* Upload Card */}
-        <div
-          className={cn(
-            "card-surface rounded-xl p-6 cursor-pointer transition-all",
-            mode === "upload" ? "border-primary glow-cyan border" : "hover:border-primary/50 border border-border"
-          )}
-          onClick={() => mode === "choose" && document.getElementById("id-upload")?.click()}
-        >
-          <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-            <Upload size={20} className="text-primary" />
-            Upload ID Photo
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            American Driver's License or Passport
+      <div className="space-y-6 mb-8">
+        {/* Step 1: Document Upload */}
+        <div className="card-surface rounded-xl p-6 border border-border">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Upload size={20} className="text-primary" />
+              Upload ID Document
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4 ml-8">
+            Driver's License, Passport, or official ID (JPG, JPEG, PDF)
           </p>
 
           {!uploadedFile ? (
@@ -224,11 +205,11 @@ const ScanID = () => {
             >
               <Upload className="text-primary mb-2" size={36} />
               <span className="text-sm text-muted-foreground">Click or drag to upload</span>
-              <span className="text-xs text-muted-foreground mt-1">JPG, PNG</span>
+              <span className="text-xs text-muted-foreground mt-1">JPG, JPEG, PDF</span>
               <input
                 id="id-upload"
                 type="file"
-                accept="image/*"
+                accept=".jpg,.jpeg,.pdf,image/jpeg,application/pdf"
                 className="hidden"
                 onChange={handleFileUpload}
               />
@@ -236,7 +217,13 @@ const ScanID = () => {
           ) : (
             <div className="space-y-4">
               <div className="rounded-xl overflow-hidden border border-border">
-                <img src={uploadedFile} alt="ID Preview" className="w-full h-40 object-cover" />
+                {uploadedFile === "pdf" ? (
+                  <div className="w-full h-40 flex items-center justify-center bg-secondary">
+                    <span className="text-muted-foreground text-sm font-medium">PDF Document Uploaded</span>
+                  </div>
+                ) : (
+                  <img src={uploadedFile} alt="ID Preview" className="w-full h-40 object-cover" />
+                )}
               </div>
               {processing ? (
                 <div className="flex items-center gap-2 text-primary">
@@ -273,61 +260,46 @@ const ScanID = () => {
           )}
         </div>
 
-        {/* Manual Card */}
-        <div
-          className={cn(
-            "card-surface rounded-xl p-6 cursor-pointer transition-all border",
-            mode === "manual" ? "border-muted-foreground" : "border-border hover:border-muted-foreground/50"
-          )}
-          onClick={() => setMode("manual")}
-        >
-          <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center gap-2">
-            <FileText size={20} className="text-muted-foreground" />
-            Enter Manually
-          </h3>
-          <p className="text-xs text-muted-foreground mb-4 italic">
-            For testing — enter any information
+        {/* Step 2: Face Scan (cosmetic only) */}
+        <div className="card-surface rounded-xl p-6 border border-border">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Camera size={20} className="text-primary" />
+              Face Scan
+            </h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4 ml-8">
+            Biometric verification to confirm your identity
           </p>
 
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name" className="text-foreground">Full Name</Label>
-              <Input
-                id="name"
-                value={manualName}
-                onChange={(e) => { setManualName(e.target.value); setMode("manual"); }}
-                placeholder="John Doe"
-                className="mt-1 bg-secondary border-border text-foreground"
-              />
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-8">
+            <div className="w-24 h-24 rounded-full border-4 border-muted-foreground/30 flex items-center justify-center mb-4">
+              <Camera className="text-muted-foreground" size={36} />
             </div>
-            <div>
-              <Label className="text-foreground">Country</Label>
-              <select
-                value={manualCountry}
-                onChange={(e) => { setManualCountry(e.target.value); setMode("manual"); }}
-                className="mt-1 w-full h-10 rounded-md border border-border bg-secondary text-foreground px-3 text-sm"
-              >
-                {countries.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Label className="text-foreground">ID Type</Label>
-              <select className="mt-1 w-full h-10 rounded-md border border-border bg-secondary text-foreground px-3 text-sm">
-                <option>Passport</option>
-                <option>Driver's License</option>
-              </select>
-            </div>
+            <span className="text-sm text-muted-foreground mb-4">Position your face in the frame</span>
+            <Button
+              type="button"
+              className="bg-green-600 hover:bg-green-700 text-white px-6"
+              onClick={() => {}}
+            >
+              Start Face Scan
+            </Button>
           </div>
         </div>
       </div>
+
+      {error && (
+        <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center mb-6">
+          {error}
+        </div>
+      )}
 
       <div className="flex justify-center">
         <Button
           size="lg"
           onClick={handleProceed}
-          disabled={!canProceed}
+          disabled={!detected}
           className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base"
         >
           Verify & Issue Credential →
