@@ -41,6 +41,7 @@ const initialState: TruvyState = {
   documentType: "passport",
   locationLabel: "Document Country",
   locationValue: "",
+  ageVerified: "",
 };
 
 const TruvyContext = createContext<TruvyContextType | undefined>(undefined);
