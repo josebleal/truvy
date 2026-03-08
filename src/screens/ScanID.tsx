@@ -150,7 +150,7 @@ const ScanID = () => {
       setProcessing(false);
       setVerifying(false);
     }
-  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue]);
+  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue, setAgeVerified]);
 
   const handleManualSubmit = async () => {
     if (!firstName.trim() || !lastName.trim() || !dob) {
