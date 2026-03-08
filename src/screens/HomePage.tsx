@@ -1,9 +1,36 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Clock, Users, DollarSign, ShieldCheck, Globe, Zap, Lock } from "lucide-react";
+import { motion } from "framer-motion";
 import heroShield from "@/assets/hero-shield.png";
 import networkGlobe from "@/assets/network-globe.png";
 import digitalPassport from "@/assets/digital-passport.png";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
+  }),
+};
+
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: (i: number) => ({
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.1, ease: "easeOut" },
+  }),
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: (i: number) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.4, 0.25, 1] },
+  }),
+};
 
 const stats = [
   { value: "~40.5%", desc: "of onboarding is manual identity verification", icon: Clock },
@@ -19,137 +46,209 @@ const HomePage = () => {
     <div className="min-h-screen">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="max-w-7xl mx-auto px-6 pt-20 pb-24 md:pt-32 md:pb-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-6">
-                <Lock size={12} />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/[0.04] rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 pt-20 pb-20 md:pt-28 md:pb-28 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                custom={0}
+                variants={fadeUp}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] text-primary text-xs font-medium mb-8 tracking-wide"
+              >
+                <Lock size={11} />
                 Portable Digital Identity for Global Finance
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold font-display text-foreground mb-6 leading-[1.1] tracking-tight">
+              </motion.div>
+
+              <motion.h1
+                initial="hidden"
+                animate="visible"
+                custom={1}
+                variants={fadeUp}
+                className="text-[2.75rem] md:text-[3.5rem] lg:text-[4rem] font-bold font-display text-foreground mb-6 leading-[1.08] tracking-tight"
+              >
                 Verify Once.{" "}
                 <span className="gradient-text">Use Anywhere.</span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mb-8 leading-relaxed">
+              </motion.h1>
+
+              <motion.p
+                initial="hidden"
+                animate="visible"
+                custom={2}
+                variants={fadeUp}
+                className="text-base md:text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed"
+              >
                 Get verified once with a trusted issuer and share your credentials with any bank in the world — 
-                without ever transmitting raw documents. The Visa network for identity.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+                without ever transmitting raw documents.
+              </motion.p>
+
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                custom={3}
+                variants={fadeUp}
+                className="flex flex-col sm:flex-row gap-3"
+              >
                 <Button
                   size="lg"
                   onClick={() => setCurrentScreen(1)}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-12"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-11 rounded-lg"
                 >
-                  Try the Demo <ArrowRight size={16} className="ml-2" />
+                  Try the Demo <ArrowRight size={15} className="ml-2" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={() => setCurrentScreen(5)}
-                  className="border-border text-foreground hover:bg-muted/50 px-8 text-sm font-semibold h-12"
+                  className="border-border/60 text-foreground hover:bg-muted/40 px-8 text-sm font-medium h-11 rounded-lg"
                 >
                   Try It Live on Mobile
                 </Button>
-              </div>
+              </motion.div>
             </div>
-            <div className="relative hidden lg:block">
-              <div className="relative">
-                <img
-                  src={heroShield}
-                  alt="Digital identity verification"
-                  className="w-full max-w-lg mx-auto rounded-2xl"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent rounded-2xl" />
-              </div>
-            </div>
+
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              custom={2}
+              variants={scaleIn}
+              className="relative hidden lg:block"
+            >
+              <img
+                src={heroShield}
+                alt="Digital identity verification"
+                className="w-full max-w-md mx-auto rounded-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent rounded-2xl" />
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="border-y border-border bg-card/30">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center mb-12">
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">The Problem</p>
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground">
+      <section className="border-y border-border/40">
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center mb-14"
+          >
+            <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              The Problem
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
               Identity Verification is Broken
-            </h2>
-          </div>
+            </motion.h2>
+          </motion.div>
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat) => {
+            {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div
+                <motion.div
                   key={stat.value}
-                  className="card-surface rounded-xl p-6 text-center group hover:border-primary/30 transition-colors"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                  custom={i}
+                  variants={scaleIn}
+                  className="card-surface rounded-xl p-6 text-center group hover:border-primary/20 transition-colors duration-300"
                 >
-                  <Icon className="text-primary mx-auto mb-3 opacity-60 group-hover:opacity-100 transition-opacity" size={20} />
+                  <Icon className="text-primary mx-auto mb-3 opacity-50 group-hover:opacity-80 transition-opacity" size={18} />
                   <p className="text-2xl md:text-3xl font-bold font-display text-foreground mb-2">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{stat.desc}</p>
-                </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{stat.desc}</p>
+                </motion.div>
               );
             })}
           </div>
-          <p className="text-center text-[11px] text-muted-foreground mt-6 italic">
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
+            variants={fadeIn}
+            className="text-center text-[10px] text-muted-foreground/60 mt-8"
+          >
             Sources: Fenergo, PwC, Juniper Research
-          </p>
+          </motion.p>
         </div>
       </section>
 
       {/* Our Story */}
-      <section className="max-w-7xl mx-auto px-6 py-20 md:py-28">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">Our Story</p>
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-6">
+      <section className="max-w-7xl mx-auto px-6 py-24 md:py-32">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              Our Story
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground mb-8">
               Why We Built TruVy
-            </h2>
-            <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
+            </motion.h2>
+            <motion.div custom={2} variants={fadeUp} className="space-y-5 text-muted-foreground text-[15px] leading-[1.75]">
               <p>
                 As international students, we experienced firsthand the frustrating reality of opening a bank account 
-                in a new country. Every time we moved — for school, for work, for life — we had to repeat the same 
+                in a new country. Every time we moved — for school, for work, for life — we repeated the same 
                 exhausting identity verification process from scratch.
               </p>
               <p>
-                Hours spent gathering documents, uploading passports, waiting days for manual reviews, only to do 
-                it all over again at the next institution.
-              </p>
-              <p>
                 On the bank side, we discovered that{" "}
-                <span className="text-foreground font-semibold">70% of financial institutions report losing 
-                potential customers</span> because of slow KYC onboarding. Banks spend{" "}
-                <span className="text-foreground font-semibold">$22 million per year</span> on identity 
-                verification — and the process still takes{" "}
-                <span className="text-foreground font-semibold">11 minutes per person</span>.
+                <span className="text-foreground font-medium">70% of financial institutions lose 
+                potential customers</span> due to slow KYC onboarding. Banks spend{" "}
+                <span className="text-foreground font-medium">$22M per year</span> on identity 
+                verification — taking{" "}
+                <span className="text-foreground font-medium">11 minutes per person</span> on average.
               </p>
-              <p className="text-foreground font-medium">
-                We asked ourselves: <span className="text-primary italic">why can't identity 
-                work like a Visa card?</span> Verify once with a trusted issuer, and every bank 
-                accepts it — without seeing your raw documents.
+              <p className="text-foreground/90">
+                We asked: <span className="text-primary italic">why can't identity 
+                work like a Visa card?</span> Verify once, accepted everywhere — 
+                without exposing raw documents.
               </p>
-            </div>
-          </div>
-          <div className="relative">
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            custom={1}
+            variants={scaleIn}
+            className="relative"
+          >
             <img
               src={networkGlobe}
               alt="Global identity network"
               className="w-full rounded-2xl"
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-background/50 via-transparent to-transparent rounded-2xl" />
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-l from-background/40 via-transparent to-transparent rounded-2xl" />
+          </motion.div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="border-y border-border bg-card/20">
-        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
-          <div className="text-center mb-16">
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">How It Works</p>
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-3">
+      <section className="border-y border-border/40">
+        <div className="max-w-7xl mx-auto px-6 py-24 md:py-32">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="text-center mb-16"
+          >
+            <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              How It Works
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground">
               Three Steps. Zero Documents Transmitted.
-            </h2>
-          </div>
+            </motion.h2>
+          </motion.div>
+
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
@@ -170,83 +269,113 @@ const HomePage = () => {
                 desc: "Any bank verifies your credential instantly using RSA-2048 cryptography. They get the answers they need — never the raw data.",
                 icon: Globe,
               },
-            ].map((item) => {
+            ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={item.step} className="card-surface rounded-xl p-8 group hover:border-primary/20 transition-all">
-                  <div className="flex items-center gap-3 mb-5">
-                    <span className="text-3xl font-black font-display text-primary/20 group-hover:text-primary/40 transition-colors">{item.step}</span>
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon className="text-primary" size={20} />
+                <motion.div
+                  key={item.step}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                  custom={i}
+                  variants={fadeUp}
+                  className="card-surface rounded-xl p-8 group hover:border-primary/15 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-3xl font-black font-display text-muted/80 group-hover:text-primary/30 transition-colors">{item.step}</span>
+                    <div className="w-9 h-9 rounded-lg bg-primary/[0.08] flex items-center justify-center group-hover:bg-primary/[0.12] transition-colors">
+                      <Icon className="text-primary" size={18} />
                     </div>
                   </div>
-                  <h3 className="text-lg font-bold font-display text-foreground mb-3">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                </div>
+                  <h3 className="text-base font-bold font-display text-foreground mb-3">{item.title}</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* Digital Passport Image */}
-      <section className="max-w-7xl mx-auto px-6 py-20 md:py-28">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="order-2 lg:order-1">
+      {/* Digital Passport */}
+      <section className="max-w-7xl mx-auto px-6 py-24 md:py-32">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            custom={0}
+            variants={scaleIn}
+            className="order-2 lg:order-1"
+          >
             <img
               src={digitalPassport}
               alt="TruVy Digital Passport"
               className="w-full rounded-2xl"
             />
-          </div>
-          <div className="order-1 lg:order-2">
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">The Product</p>
-            <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-6">
-              Your Digital Identity, <span className="gradient-text">Always With You</span>
-            </h2>
-            <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="order-1 lg:order-2"
+          >
+            <motion.p custom={0} variants={fadeUp} className="text-[11px] font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+              The Product
+            </motion.p>
+            <motion.h2 custom={1} variants={fadeUp} className="text-2xl md:text-3xl font-bold font-display text-foreground mb-6">
+              Your Digital Identity,{" "}
+              <span className="gradient-text">Always With You</span>
+            </motion.h2>
+            <motion.div custom={2} variants={fadeUp} className="space-y-4 text-[15px] text-muted-foreground leading-[1.75]">
               <p>
                 The TruVy Passport is a cryptographically signed credential that lives in your digital wallet. 
                 It contains verified claims about your identity — but never your raw documents.
               </p>
               <p>
                 Banks receive only what they need: your name, country, sanctions status, and age verification. 
-                They can mathematically prove these claims are authentic using RSA-2048 cryptography, 
-                without ever seeing your passport, driver's license, or personal documents.
+                They can mathematically prove these claims are authentic using RSA-2048 cryptography.
               </p>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-6">
+            </motion.div>
+            <motion.div custom={3} variants={fadeUp} className="flex flex-wrap gap-2 mt-8">
               {["RSA-2048", "W3C VC", "FATF Compliant", "NIST IAL2", "eIDAS 2.0"].map((tag) => (
-                <span key={tag} className="text-[11px] text-muted-foreground border border-border rounded-full px-3 py-1 font-medium">
+                <span key={tag} className="text-[11px] text-muted-foreground/70 border border-border/50 rounded-full px-3 py-1 font-medium">
                   {tag}
                 </span>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-7xl mx-auto px-6 pb-20 md:pb-28">
-        <div className="card-surface rounded-2xl p-10 md:p-16 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
+      <section className="max-w-7xl mx-auto px-6 pb-24 md:pb-32">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          custom={0}
+          variants={scaleIn}
+          className="card-surface rounded-2xl p-12 md:p-20 text-center relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-primary/[0.02]" />
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold font-display text-foreground mb-4">
               See It In Action
             </h2>
-            <p className="text-muted-foreground mb-8 max-w-lg mx-auto text-sm leading-relaxed">
+            <p className="text-muted-foreground mb-10 max-w-md mx-auto text-[15px] leading-relaxed">
               Walk through the full TruVy flow: scan an ID, issue a credential, view your wallet, 
-              verify with a bank, and even test a forgery attack.
+              verify with a bank, and test a forgery attack.
             </p>
             <Button
               size="lg"
               onClick={() => setCurrentScreen(1)}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 text-sm font-semibold h-12"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 text-sm font-semibold h-11 rounded-lg"
             >
-              Start the Demo <ArrowRight size={16} className="ml-2" />
+              Start the Demo <ArrowRight size={15} className="ml-2" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
