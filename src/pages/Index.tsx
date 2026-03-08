@@ -20,8 +20,6 @@ const AppContent = () => {
         return <UserWallet />;
       case 4:
         return <BankVerify />;
-      case 5:
-        return <TryItLive />;
       default:
         return <HomePage />;
     }

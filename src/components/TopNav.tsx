@@ -8,7 +8,6 @@ const tabs = [
   { label: "Issue", icon: BadgeCheck },
   { label: "User Wallet", icon: Wallet },
   { label: "Any Bank — Verify", icon: Building2 },
-  { label: "Try It Live", icon: Smartphone },
 ];
 
 const TopNav = () => {
