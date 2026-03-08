@@ -355,8 +355,8 @@ const HomePage = () => {
                     <Icon className="text-primary" size={18} />
                   </div>
                 </div>
-                <h3 className="text-base font-bold font-display text-foreground mb-3">{item.title}</h3>
-                <p className="text-[13px] text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="text-lg font-bold font-display text-foreground mb-3">{item.title}</h3>
+                <p className="text-base text-muted-foreground leading-relaxed">{item.desc}</p>
               </motion.div>
             );
           })}
