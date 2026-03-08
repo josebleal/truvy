@@ -166,13 +166,18 @@ const BankVerify = () => {
           </p>
 
           {forgeryResult === "idle" && (
-            <Button
-              onClick={handleForgery}
-              variant="outline"
-              className="w-full border-destructive/50 text-destructive hover:bg-destructive/10"
-            >
-              Send Forged Token
-            </Button>
+            <div className="space-y-3">
+              <Button
+                onClick={handleForgery}
+                variant="outline"
+                className="w-full border-destructive/50 text-destructive hover:bg-destructive/10"
+              >
+                Send Forged Token
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Attempts to submit a tampered token. The cryptographic signature check will reject it instantly, demonstrating that credentials cannot be faked.
+              </p>
+            </div>
           )}
 
           {forgeryResult === "loading" && (
