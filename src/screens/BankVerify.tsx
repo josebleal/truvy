@@ -62,7 +62,7 @@ const BankVerify = () => {
     return (
       <div className="max-w-lg mx-auto py-16 px-4 text-center">
         <p className="text-muted-foreground">No credential to verify. Issue one first.</p>
-        <Button variant="outline" className="mt-4" onClick={() => setCurrentScreen(0)}>
+        <Button variant="outline" className="mt-4" onClick={() => setCurrentScreen(1)}>
           Go to Scan ID
         </Button>
       </div>

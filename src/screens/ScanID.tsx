@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Upload, FileText, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
+
 const countries = ["United States", "Brazil", "United Kingdom", "Canada", "Mexico", "Germany", "Japan", "Australia", "India", "Nigeria"];
 
 const ScanID = () => {
-  const { state, setName, setCountry, setCurrentScreen } = useTruvy();
+  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen } = useTruvy();
   const [mode, setMode] = useState<"choose" | "upload" | "manual">("choose");
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -18,6 +20,7 @@ const ScanID = () => {
   const [verifyStep, setVerifyStep] = useState(0);
   const [manualName, setManualName] = useState("");
   const [manualCountry, setManualCountry] = useState("United States");
+  const [error, setError] = useState("");
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,26 +41,52 @@ const ScanID = () => {
   }, [setName, setCountry]);
 
   const handleProceed = async () => {
+    const finalName = mode === "manual" ? manualName.trim() : state.name;
+    const finalCountry = mode === "manual" ? manualCountry : state.country;
+
     if (mode === "manual") {
-      if (!manualName.trim()) return;
-      setName(manualName.trim());
-      setCountry(manualCountry);
+      if (!finalName) return;
+      setName(finalName);
+      setCountry(finalCountry);
     }
 
     setVerifying(true);
+    setError("");
+
     const steps = [
       "Running biometric check...",
       "Sanctions screening...",
       "Age verification...",
-      "Preparing credential request...",
+      "Issuing TruVy credential...",
     ];
 
-    for (let i = 0; i < steps.length; i++) {
+    for (let i = 0; i < steps.length - 1; i++) {
       setVerifyStep(i);
       await new Promise((r) => setTimeout(r, 1000));
     }
 
-    setCurrentScreen(1);
+    // Final step: call the /issue API
+    setVerifyStep(steps.length - 1);
+    try {
+      const res = await fetch(`${API_BASE}/issue`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: finalName, country: finalCountry }),
+      });
+      const data = await res.json();
+      if (data.token) {
+        setToken(data.token);
+        setQrBase64(data.qrBase64 || "");
+        setIssuedAt(new Date().toISOString());
+        setCurrentScreen(2); // Go to UserWallet
+      } else {
+        setError("Failed to issue credential. Please try again.");
+        setVerifying(false);
+      }
+    } catch {
+      setError("Network error. Please try again.");
+      setVerifying(false);
+    }
   };
 
   const canProceed = mode === "upload" ? detected : mode === "manual" ? manualName.trim().length > 0 : false;
@@ -67,14 +96,14 @@ const ScanID = () => {
       "Running biometric check...",
       "Sanctions screening...",
       "Age verification...",
-      "Preparing credential request...",
+      "Issuing TruVy credential...",
     ];
     return (
       <div className="max-w-lg mx-auto py-16 px-4 flex flex-col items-center gap-8">
         <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
           <Loader2 className="text-primary animate-spin" size={32} />
         </div>
-        <h2 className="text-2xl font-bold text-foreground">Verifying Identity</h2>
+        <h2 className="text-2xl font-bold text-foreground">Verifying & Issuing Credential</h2>
         <div className="w-full space-y-3">
           {steps.map((step, i) => (
             <div
@@ -99,6 +128,11 @@ const ScanID = () => {
             </div>
           ))}
         </div>
+        {error && (
+          <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center">
+            {error}
+          </div>
+        )}
       </div>
     );
   }
@@ -108,7 +142,7 @@ const ScanID = () => {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Verify Your Identity</h1>
         <p className="text-muted-foreground">
-          Powered by Legitimuz — Step 1 of 3
+          Scan or enter your info — we'll verify and issue your credential
         </p>
       </div>
 
@@ -242,7 +276,7 @@ const ScanID = () => {
           disabled={!canProceed}
           className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base"
         >
-          Proceed to Verification →
+          Verify & Issue Credential →
         </Button>
       </div>
     </div>
