@@ -11,6 +11,7 @@ interface TruvyState {
   documentType: "passport" | "driver_license";
   locationLabel: string;
   locationValue: string;
+  ageVerified: string;
 }
 
 interface TruvyContextType {
