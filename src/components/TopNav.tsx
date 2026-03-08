@@ -24,7 +24,7 @@ const TopNav = () => {
             onClick={() => setCurrentScreen(0)}
             className="shrink-0 hover:opacity-80 transition-opacity">
             
-            <img alt="TruVy" className="h-7 w-auto" src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png" />
+            <img alt="TruVy" className="h-8 w-auto" src={truvyLogo} />
           </button>
 
           {/* Divider */}
