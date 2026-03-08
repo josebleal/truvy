@@ -79,7 +79,7 @@ const HomePage = () => {
                 animate="visible"
                 custom={2}
                 variants={fadeUp}
-                className="text-base md:text-lg text-muted-foreground max-w-xl mb-10 leading-relaxed"
+                className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed"
               >
                 Get verified once with a trusted issuer and share your credentials 
                 with any bank in the world, without ever transmitting raw documents.
