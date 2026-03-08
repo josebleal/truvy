@@ -68,7 +68,7 @@ const HomePage = () => {
                 animate="visible"
                 custom={1}
                 variants={fadeUp}
-                className="text-[2.75rem] md:text-[3.5rem] lg:text-[4rem] font-bold font-display text-foreground mb-6 leading-[1.08] tracking-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-foreground mb-6 leading-[1.1] tracking-tight"
               >
                 Verify Once.{" "}
                 <span className="gradient-text">Use Anywhere.</span>
