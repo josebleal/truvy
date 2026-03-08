@@ -1,14 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { TruvyProvider, useTruvy } from "@/context/TruvyContext";
+import TopNav from "@/components/TopNav";
+import Footer from "@/components/Footer";
+import ScanID from "@/screens/ScanID";
+import LegitimuzIssue from "@/screens/LegitimuzIssue";
+import UserWallet from "@/screens/UserWallet";
+import BankVerify from "@/screens/BankVerify";
+import TryItLive from "@/screens/TryItLive";
 
-const Index = () => {
+const screens = [ScanID, LegitimuzIssue, UserWallet, BankVerify, TryItLive];
+
+const AppContent = () => {
+  const { state } = useTruvy();
+  const Screen = screens[state.currentScreen] || ScanID;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-background">
+      <TopNav />
+      <main className="flex-1">
+        <Screen />
+      </main>
+      <Footer />
     </div>
   );
 };
+
+const Index = () => (
+  <TruvyProvider>
+    <AppContent />
+  </TruvyProvider>
+);
 
 export default Index;
