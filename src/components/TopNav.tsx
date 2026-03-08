@@ -33,7 +33,7 @@ const TopNav = () => {
             {tabs.map((tab, i) => {
               const Icon = tab.icon;
               const isActive = state.currentScreen === i;
-              const isLocked = i > state.currentScreen && i > 0;
+              const isLocked = i >= 2 && !state.token;
               return (
                 <button
                   key={i}
