@@ -1,6 +1,5 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { cn } from "@/lib/utils";
-import truvyLogo from "@/assets/truvy-logo.png";
 import { Home, ScanLine, Building2, Wallet, ShieldCheck, Smartphone } from "lucide-react";
 
 const tabs = [
