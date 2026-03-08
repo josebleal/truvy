@@ -15,6 +15,13 @@ const ScanID = () => {
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
 
+  const handleReset = useCallback(() => {
+    setUploadedFile(null);
+    setProcessing(false);
+    setDetected(false);
+    setError("");
+  }, []);
+
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
