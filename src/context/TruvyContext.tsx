@@ -26,6 +26,7 @@ interface TruvyContextType {
   setDocumentType: (type: "passport" | "driver_license") => void;
   setLocationLabel: (label: string) => void;
   setLocationValue: (value: string) => void;
+  setAgeVerified: (age: string) => void;
   resetState: () => void;
 }
 
