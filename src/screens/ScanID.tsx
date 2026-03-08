@@ -46,6 +46,8 @@ const ScanID = () => {
   const [error, setError] = useState("");
   const [issueComplete, setIssueComplete] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDocTypeChange = (type: "passport" | "driver_license") => {
@@ -75,50 +77,58 @@ const ScanID = () => {
   };
 
   const handleFileUpload = async (file: File) => {
-    setUploadedFile(file);
-
-    const fullName = firstName.trim() && lastName.trim()
-      ? `${firstName.trim()} ${lastName.trim()}`
-      : "Document Upload";
-    setName(fullName);
-
-    if (docType === "driver_license") {
-      setLocationLabel("Issuing State");
-      setLocationValue(stateField);
-      setCountry("United States of America");
-    } else {
-      setLocationLabel("Document Country");
-      setLocationValue(country);
-      setCountry(country);
+    const allowedTypes = ["image/jpeg", "image/jpg", "application/pdf"];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError("Invalid file type. Please upload JPG, JPEG, or PDF.");
+      return;
     }
 
-    await runVerifyAnimation();
+    setUploadedFile(file);
+    setUploadError("");
+    setUploadLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("document", file);
       formData.append("documentType", docType);
 
       const issueRes = await fetch(`${API_BASE}/issue-from-document`, {
         method: "POST",
         body: formData,
       });
+
+      if (!issueRes.ok) {
+        throw new Error(`API error: ${issueRes.statusText}`);
+      }
+
       const issueData = await issueRes.json();
       if (issueData.token) {
         setToken(issueData.token);
         setQrBase64(issueData.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
         if (issueData.name) setName(issueData.name);
+        if (issueData.country) setCountry(issueData.country);
+        if (issueData.state) {
+          setLocationLabel("Issuing State");
+          setLocationValue(issueData.state);
+        }
         if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
-        setIssueComplete(true);
+        if (issueData.documentType) setDocumentType(issueData.documentType);
       } else {
-        setError("Failed to issue credential. Please try again.");
-        setVerifying(false);
+        setUploadError("Failed to issue credential. Please try again.");
       }
     } catch {
-      setError("Network error. Please try again.");
-      setVerifying(false);
+      setUploadError("Failed to upload document. Please try again.");
+    } finally {
+      setUploadLoading(false);
     }
+  };
+
+  const handleUploadReset = () => {
+    setUploadedFile(null);
+    setUploadError("");
+    setUploadLoading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleFileDrop = (e: React.DragEvent) => {
@@ -279,20 +289,47 @@ const ScanID = () => {
         </div>
       </div>
 
-      {/* Upload Document Box */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileDrop}
-        onClick={() => fileInputRef.current?.click()}
-        className="card-surface rounded-xl p-8 border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer mb-6 text-center"
+        onClick={() => !uploadLoading && fileInputRef.current?.click()}
+        className={cn(
+          "card-surface rounded-xl p-8 border-2 border-dashed transition-colors mb-6 text-center",
+          uploadLoading ? "border-primary/50 cursor-wait" : "border-border hover:border-primary/50 cursor-pointer",
+          uploadError && "border-destructive"
+        )}
       >
-        <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
-        <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
-        <p className="text-xs text-muted-foreground">
-          Drag & drop or click to select — JPG, JPEG, or PDF
-        </p>
-        {uploadedFile && (
-          <p className="text-xs text-primary mt-2">{uploadedFile.name}</p>
+        {uploadLoading ? (
+          <>
+            <Loader2 className="mx-auto mb-3 text-primary animate-spin" size={32} />
+            <p className="text-sm font-medium text-foreground">Processing document...</p>
+            {uploadedFile && <p className="text-xs text-muted-foreground mt-1">{uploadedFile.name}</p>}
+          </>
+        ) : uploadError ? (
+          <>
+            <XCircle className="mx-auto mb-3 text-destructive" size={32} />
+            <p className="text-sm font-medium text-destructive mb-2">{uploadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); handleUploadReset(); }}
+              className="border-destructive text-destructive hover:bg-destructive/10"
+            >
+              Try Again
+            </Button>
+          </>
+        ) : (
+          <>
+            <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
+            <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
+            <p className="text-xs text-muted-foreground">
+              Drag & drop or click to select — JPG, JPEG, or PDF
+            </p>
+            {uploadedFile && (
+              <p className="text-xs text-primary mt-2">✓ {uploadedFile.name}</p>
+            )}
+          </>
         )}
         <input
           ref={fileInputRef}
