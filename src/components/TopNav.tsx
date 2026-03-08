@@ -40,7 +40,7 @@ const TopNav = () => {
                   key={i}
                   onClick={() => setCurrentScreen(i)}
                   className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-all",
+                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
                     isActive ?
                     "text-foreground bg-muted/60" :
                     "text-muted-foreground hover:text-foreground/80"
