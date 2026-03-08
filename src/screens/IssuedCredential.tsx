@@ -1,6 +1,6 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ArrowRight, ShieldCheck, Copy } from "lucide-react";
+import { CheckCircle, ArrowRight, ShieldCheck, Copy, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
