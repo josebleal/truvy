@@ -1,8 +1,9 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { cn } from "@/lib/utils";
-import { ScanLine, Building2, Wallet, ShieldCheck, Smartphone } from "lucide-react";
+import { Home, ScanLine, Building2, Wallet, ShieldCheck, Smartphone } from "lucide-react";
 
 const tabs = [
+  { label: "Home", icon: Home },
   { label: "Scan ID", icon: ScanLine },
   { label: "Legitimuz — Issue", icon: Building2 },
   { label: "User Wallet", icon: Wallet },
@@ -20,13 +21,6 @@ const TopNav = () => {
           {tabs.map((tab, i) => {
             const Icon = tab.icon;
             const isActive = state.currentScreen === i;
-            const colors = [
-              "text-primary",
-              "text-primary",
-              "text-gold",
-              "text-success",
-              "text-primary",
-            ];
             return (
               <button
                 key={i}
@@ -34,7 +28,7 @@ const TopNav = () => {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all min-w-fit",
                   isActive
-                    ? `${colors[i]} bg-secondary`
+                    ? "text-primary bg-secondary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 )}
               >
@@ -49,7 +43,7 @@ const TopNav = () => {
       {/* Progress indicator */}
       <div className="max-w-6xl mx-auto px-4 pb-2">
         <div className="flex items-center gap-1">
-          {[0, 1, 2, 3, 4].map((step) => (
+          {tabs.map((_, step) => (
             <div
               key={step}
               className={cn(
