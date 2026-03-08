@@ -1,6 +1,5 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { cn } from "@/lib/utils";
-import truvyLogo from "@/assets/truvy-logo.png";
 import { Home, ScanLine, Building2, Wallet, ShieldCheck, Smartphone } from "lucide-react";
 
 const tabs = [
@@ -22,9 +21,10 @@ const TopNav = () => {
           {/* Logo */}
           <button
             onClick={() => setCurrentScreen(0)}
-            className="shrink-0 hover:opacity-80 transition-opacity">
-            
-            <img alt="TruVy" className="h-8 w-auto" src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png" />
+            className="shrink-0 hover:opacity-80 transition-opacity flex items-center">
+            <span className="text-xl font-black font-display tracking-tight text-foreground">
+              TRU<span className="text-primary">✓</span>Y
+            </span>
           </button>
 
           {/* Divider */}
