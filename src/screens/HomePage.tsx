@@ -48,9 +48,8 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-transparent" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/[0.04] rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 pt-20 pb-20 md:pt-28 md:pb-28 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
+        <div className="max-w-7xl mx-auto px-6 pt-24 pb-24 md:pt-36 md:pb-36 relative z-10">
+          <div className="max-w-3xl">
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -67,7 +66,7 @@ const HomePage = () => {
                 animate="visible"
                 custom={1}
                 variants={fadeUp}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-foreground mb-6 leading-[1.1] tracking-tight"
+                className="text-5xl md:text-6xl lg:text-7xl font-bold font-display text-foreground mb-6 leading-[1.05] tracking-tight"
               >
                 Verify Once.{" "}
                 <span className="gradient-text">Use Anywhere.</span>
@@ -94,7 +93,7 @@ const HomePage = () => {
                 <Button
                   size="lg"
                   onClick={() => setCurrentScreen(1)}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-11 rounded-lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-12 rounded-lg"
                 >
                   Try the Demo <ArrowRight size={15} className="ml-2" />
                 </Button>
@@ -102,27 +101,11 @@ const HomePage = () => {
                   size="lg"
                   variant="outline"
                   onClick={() => setCurrentScreen(5)}
-                  className="border-border/60 text-foreground hover:bg-muted/40 px-8 text-sm font-medium h-11 rounded-lg"
+                  className="border-border/60 text-foreground hover:bg-muted/40 px-8 text-sm font-medium h-12 rounded-lg"
                 >
                   Try It Live on Mobile
                 </Button>
               </motion.div>
-            </div>
-
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              custom={2}
-              variants={scaleIn}
-              className="relative hidden lg:block"
-            >
-              <img
-                src={heroShield}
-                alt="Digital identity verification"
-                className="w-full max-w-md mx-auto rounded-2xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent rounded-2xl" />
-            </motion.div>
           </div>
         </div>
       </section>
