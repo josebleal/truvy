@@ -60,15 +60,16 @@ const IssuedCredential = () => {
             </span>
           </div>
           <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
-            <span className="text-muted-foreground">Sanctions Check</span>
-            <span className="text-primary font-medium flex items-center gap-1">
-              <CheckCircle size={14} /> Clear
-            </span>
-          </div>
-          <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Age Verified</span>
-            <span className="text-primary font-medium flex items-center gap-1">
-              <CheckCircle size={14} /> 18+
+            <span className="flex items-center gap-2">
+              <span className={`font-medium flex items-center gap-1 ${state.ageVerified === "21+" || state.ageVerified === "18+" ? "text-primary" : "text-destructive"}`}>
+                {state.ageVerified === "21+" || state.ageVerified === "18+" ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                18+
+              </span>
+              <span className={`font-medium flex items-center gap-1 ${state.ageVerified === "21+" ? "text-primary" : "text-destructive"}`}>
+                {state.ageVerified === "21+" ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                21+
+              </span>
             </span>
           </div>
         </div>
