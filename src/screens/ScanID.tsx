@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { Upload, CheckCircle, Loader2, Camera } from "lucide-react";
+import { Upload, CheckCircle, Loader2, Camera, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
@@ -14,6 +14,13 @@ const ScanID = () => {
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
+
+  const handleReset = useCallback(() => {
+    setUploadedFile(null);
+    setProcessing(false);
+    setDetected(false);
+    setError("");
+  }, []);
 
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -229,6 +236,21 @@ const ScanID = () => {
                 <div className="flex items-center gap-2 text-primary">
                   <Loader2 className="animate-spin" size={16} />
                   <span className="text-sm">Processing document...</span>
+                </div>
+              ) : error ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-destructive text-sm font-medium">
+                    <XCircle size={16} />
+                    {error}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    className="text-destructive border-destructive hover:bg-destructive/10"
+                  >
+                    <XCircle size={14} className="mr-1" /> Try Again
+                  </Button>
                 </div>
               ) : detected ? (
                 <>
