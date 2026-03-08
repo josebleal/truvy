@@ -59,6 +59,7 @@ export const TruvyProvider = ({ children }: { children: ReactNode }) => {
   const setDocumentType = (type: "passport" | "driver_license") => setState((s) => ({ ...s, documentType: type }));
   const setLocationLabel = (label: string) => setState((s) => ({ ...s, locationLabel: label }));
   const setLocationValue = (value: string) => setState((s) => ({ ...s, locationValue: value }));
+  const setAgeVerified = (age: string) => setState((s) => ({ ...s, ageVerified: age }));
   const resetState = () => setState(initialState);
 
   return (
