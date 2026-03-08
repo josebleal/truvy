@@ -97,14 +97,6 @@ const HomePage = () => {
                 >
                   Try the Demo <ArrowRight size={15} className="ml-2" />
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => setCurrentScreen(5)}
-                  className="border-border/60 text-foreground hover:bg-muted/40 px-8 text-sm font-medium h-12 rounded-lg"
-                >
-                  Try It Live on Mobile
-                </Button>
               </motion.div>
           </div>
         </div>
