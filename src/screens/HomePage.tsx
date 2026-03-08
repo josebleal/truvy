@@ -260,7 +260,7 @@ const HomePage = () => {
               <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-8">
                 Why We Built TruVy
               </motion.h2>
-              <motion.div custom={2} variants={fadeUp} className="space-y-5 text-muted-foreground text-[15px] leading-[1.75]">
+              <motion.div custom={2} variants={fadeUp} className="space-y-5 text-muted-foreground text-base md:text-lg leading-[1.8]">
                 <p>
                   As international students, we experienced firsthand the frustrating reality of opening 
                   a bank account in a new country. Every time we moved for school, work, or life, we repeated 
