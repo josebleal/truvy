@@ -1,30 +1,28 @@
-import { Shield } from "lucide-react";
+import truvyLogoImg from "@/assets/truvy-logo.png";
 
 const TruvyLogo = ({ size = "default" }: { size?: "small" | "default" | "large" }) => {
   const sizes = {
-    small: { icon: 20, text: "text-lg", tagline: "text-[10px]" },
-    default: { icon: 28, text: "text-2xl", tagline: "text-xs" },
-    large: { icon: 36, text: "text-3xl", tagline: "text-sm" },
+    small: { text: "text-xl", tagline: "text-[10px]", check: "text-lg" },
+    default: { text: "text-3xl", tagline: "text-xs", check: "text-2xl" },
+    large: { text: "text-5xl", tagline: "text-sm", check: "text-4xl" },
   };
 
   const s = sizes[size];
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className="flex items-center gap-2">
-        <div className="relative">
-          <Shield className="text-primary" size={s.icon} strokeWidth={2.5} />
-          <div className="absolute inset-0 blur-sm opacity-50">
-            <Shield className="text-primary" size={s.icon} strokeWidth={2.5} />
-          </div>
-        </div>
-        <span className={`${s.text} font-bold tracking-tight text-foreground`}>
-          Tru<span className="text-primary">Vy</span>
+      <div className="flex items-center">
+        <span className={`${s.text} font-black tracking-tight text-foreground`}>
+          TRU
+        </span>
+        <span className={`${s.check} font-black text-primary`}>✓</span>
+        <span className={`${s.text} font-black tracking-tight text-foreground`}>
+          Y
         </span>
       </div>
       {size !== "small" && (
-        <p className={`${s.tagline} text-muted-foreground tracking-widest uppercase`}>
-          Verify Once · Share Nothing · Trust Everything
+        <p className={`${s.tagline} text-muted-foreground tracking-widest uppercase italic`}>
+          Verify once. Use anywhere.
         </p>
       )}
     </div>

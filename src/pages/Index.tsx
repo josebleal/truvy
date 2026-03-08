@@ -1,17 +1,18 @@
 import { TruvyProvider, useTruvy } from "@/context/TruvyContext";
 import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
+import HomePage from "@/screens/HomePage";
 import ScanID from "@/screens/ScanID";
 import LegitimuzIssue from "@/screens/LegitimuzIssue";
 import UserWallet from "@/screens/UserWallet";
 import BankVerify from "@/screens/BankVerify";
 import TryItLive from "@/screens/TryItLive";
 
-const screens = [ScanID, LegitimuzIssue, UserWallet, BankVerify, TryItLive];
+const screens = [HomePage, ScanID, LegitimuzIssue, UserWallet, BankVerify, TryItLive];
 
 const AppContent = () => {
   const { state } = useTruvy();
-  const Screen = screens[state.currentScreen] || ScanID;
+  const Screen = screens[state.currentScreen] || HomePage;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
