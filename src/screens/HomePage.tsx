@@ -308,7 +308,7 @@ const HomePage = () => {
                 className="card-surface rounded-xl p-8 group hover:border-primary/15 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="text-3xl font-black font-display text-muted/80 group-hover:text-primary/30 transition-colors">{item.step}</span>
+                  <span className="text-3xl font-black font-display text-primary/60 group-hover:text-primary transition-colors">{item.step}</span>
                   <div className="w-9 h-9 rounded-lg bg-primary/[0.08] flex items-center justify-center group-hover:bg-primary/[0.12] transition-colors">
                     <Icon className="text-primary" size={18} />
                   </div>
