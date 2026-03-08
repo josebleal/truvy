@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { Upload, CheckCircle, Loader2, Camera } from "lucide-react";
+import { Upload, CheckCircle, Loader2, Camera, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
