@@ -47,8 +47,8 @@ const UserWallet = () => {
             <span className="text-foreground font-medium">{state.name}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Country</span>
-            <span className="text-foreground font-medium">{state.country}</span>
+            <span className="text-muted-foreground">{state.locationLabel || "Document Country"}</span>
+            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Issued</span>

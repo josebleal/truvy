@@ -7,13 +7,14 @@ import { cn } from "@/lib/utils";
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
 
 const ScanID = () => {
-  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen } = useTruvy();
+  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue } = useTruvy();
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [detected, setDetected] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
+  const [docType, setDocType] = useState<"passport" | "driver_license">("passport");
 
   const handleReset = useCallback(() => {
     setUploadedFile(null);
@@ -22,11 +23,16 @@ const ScanID = () => {
     setError("");
   }, []);
 
+  const handleDocTypeChange = (type: "passport" | "driver_license") => {
+    setDocType(type);
+    setDocumentType(type);
+    handleReset();
+  };
+
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show preview for images, placeholder for PDFs
     if (file.type === "application/pdf") {
       setUploadedFile("pdf");
     } else {
@@ -48,6 +54,7 @@ const ScanID = () => {
       const docData = await docRes.json();
       const extractedName = docData.documentFields?.name || "";
       const extractedCountry = docData.documentFields?.country || "United States";
+      const extractedState = docData.documentFields?.state || "";
 
       if (!extractedName) {
         setError("Could not extract name from document. Please try again.");
@@ -57,9 +64,20 @@ const ScanID = () => {
 
       setName(extractedName);
       setCountry(extractedCountry);
+
+      // Set location label/value based on document type
+      if (docType === "driver_license") {
+        setLocationLabel("Issuing State");
+        setLocationValue(extractedState || extractedCountry);
+      } else {
+        setLocationLabel("Document Country");
+        setLocationValue(extractedCountry);
+      }
+
       setProcessing(false);
       setDetected(true);
 
+      // Auto-issue
       setVerifying(true);
       const steps = [
         "Running biometric check...",
@@ -76,7 +94,11 @@ const ScanID = () => {
       const issueRes = await fetch(`${API_BASE}/issue`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: extractedName, country: extractedCountry }),
+        body: JSON.stringify({
+          name: extractedName,
+          country: extractedCountry,
+          documentType: docType,
+        }),
       });
       const issueData = await issueRes.json();
       if (issueData.token) {
@@ -93,7 +115,7 @@ const ScanID = () => {
       setProcessing(false);
       setVerifying(false);
     }
-  }, [setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen]);
+  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue]);
 
   const handleProceed = async () => {
     if (!detected) return;
@@ -118,7 +140,11 @@ const ScanID = () => {
       const res = await fetch(`${API_BASE}/issue`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: state.name, country: state.country }),
+        body: JSON.stringify({
+          name: state.name,
+          country: state.country,
+          documentType: docType,
+        }),
       });
       const data = await res.json();
       if (data.token) {
@@ -182,6 +208,8 @@ const ScanID = () => {
     );
   }
 
+  const uploadLabel = docType === "passport" ? "Upload Passport Photo" : "Upload Driver's License";
+
   return (
     <div className="max-w-xl mx-auto py-8 px-4">
       <div className="text-center mb-8">
@@ -191,6 +219,36 @@ const ScanID = () => {
         </p>
       </div>
 
+      {/* Document Type Selector */}
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex rounded-full bg-secondary p-1 border border-border">
+          <button
+            type="button"
+            onClick={() => handleDocTypeChange("passport")}
+            className={cn(
+              "px-5 py-2 rounded-full text-sm font-medium transition-all duration-200",
+              docType === "passport"
+                ? "bg-green-600 text-white shadow-md"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Passport
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDocTypeChange("driver_license")}
+            className={cn(
+              "px-5 py-2 rounded-full text-sm font-medium transition-all duration-200",
+              docType === "driver_license"
+                ? "bg-green-600 text-white shadow-md"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Driver's License
+          </button>
+        </div>
+      </div>
+
       <div className="space-y-6 mb-8">
         {/* Step 1: Document Upload */}
         <div className="card-surface rounded-xl p-6 border border-border">
@@ -198,11 +256,11 @@ const ScanID = () => {
             <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
               <Upload size={20} className="text-primary" />
-              Upload ID Document
+              {uploadLabel}
             </h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4 ml-8">
-            Driver's License, Passport, or official ID (JPG, JPEG, PDF)
+            {docType === "passport" ? "Passport photo page" : "Front of Driver's License"} (JPG, JPEG, PDF)
           </p>
 
           {!uploadedFile ? (
@@ -264,8 +322,8 @@ const ScanID = () => {
                       <span className="text-foreground font-medium">{state.name}</span>
                     </div>
                     <div className="flex justify-between p-2 rounded bg-secondary">
-                      <span className="text-muted-foreground">State / Country</span>
-                      <span className="text-foreground font-medium">{state.country}</span>
+                      <span className="text-muted-foreground">{state.locationLabel}</span>
+                      <span className="text-foreground font-medium">{state.locationValue}</span>
                     </div>
                     <div className="flex justify-between p-2 rounded bg-secondary">
                       <span className="text-muted-foreground">ID Number</span>

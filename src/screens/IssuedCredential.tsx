@@ -50,8 +50,8 @@ const IssuedCredential = () => {
             <span className="text-foreground font-medium">{state.name}</span>
           </div>
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
-            <span className="text-muted-foreground">Country</span>
-            <span className="text-foreground font-medium">{state.country}</span>
+            <span className="text-muted-foreground">{state.locationLabel || "Document Country"}</span>
+            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
           </div>
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Issued At</span>
