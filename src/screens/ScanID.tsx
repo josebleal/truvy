@@ -289,20 +289,47 @@ const ScanID = () => {
         </div>
       </div>
 
-      {/* Upload Document Box */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileDrop}
-        onClick={() => fileInputRef.current?.click()}
-        className="card-surface rounded-xl p-8 border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer mb-6 text-center"
+        onClick={() => !uploadLoading && fileInputRef.current?.click()}
+        className={cn(
+          "card-surface rounded-xl p-8 border-2 border-dashed transition-colors mb-6 text-center",
+          uploadLoading ? "border-primary/50 cursor-wait" : "border-border hover:border-primary/50 cursor-pointer",
+          uploadError && "border-destructive"
+        )}
       >
-        <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
-        <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
-        <p className="text-xs text-muted-foreground">
-          Drag & drop or click to select — JPG, JPEG, or PDF
-        </p>
-        {uploadedFile && (
-          <p className="text-xs text-primary mt-2">{uploadedFile.name}</p>
+        {uploadLoading ? (
+          <>
+            <Loader2 className="mx-auto mb-3 text-primary animate-spin" size={32} />
+            <p className="text-sm font-medium text-foreground">Processing document...</p>
+            {uploadedFile && <p className="text-xs text-muted-foreground mt-1">{uploadedFile.name}</p>}
+          </>
+        ) : uploadError ? (
+          <>
+            <XCircle className="mx-auto mb-3 text-destructive" size={32} />
+            <p className="text-sm font-medium text-destructive mb-2">{uploadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); handleUploadReset(); }}
+              className="border-destructive text-destructive hover:bg-destructive/10"
+            >
+              Try Again
+            </Button>
+          </>
+        ) : (
+          <>
+            <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
+            <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
+            <p className="text-xs text-muted-foreground">
+              Drag & drop or click to select — JPG, JPEG, or PDF
+            </p>
+            {uploadedFile && (
+              <p className="text-xs text-primary mt-2">✓ {uploadedFile.name}</p>
+            )}
+          </>
         )}
         <input
           ref={fileInputRef}
