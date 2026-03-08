@@ -395,7 +395,7 @@ const HomePage = () => {
                 Your Digital Identity,{" "}
                 <span className="gradient-text">Always With You</span>
               </motion.h2>
-              <motion.div custom={2} variants={fadeUp} className="space-y-4 text-[15px] text-muted-foreground leading-[1.75]">
+              <motion.div custom={2} variants={fadeUp} className="space-y-4 text-base md:text-lg text-muted-foreground leading-[1.8]">
                 <p>
                   The TruVy Passport is a cryptographically signed credential that lives in your digital wallet. 
                   It contains verified claims about your identity, but never your raw documents.
