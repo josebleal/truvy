@@ -1,13 +1,10 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { cn } from "@/lib/utils";
-import { Home, ScanLine, Wallet, ShieldCheck, Smartphone } from "lucide-react";
+import { Home, ScanLine } from "lucide-react";
 
 const tabs = [
   { label: "Home", icon: Home },
   { label: "Scan ID", icon: ScanLine },
-  { label: "Wallet", icon: Wallet },
-  { label: "Bank Verify", icon: ShieldCheck },
-  { label: "Try It Live", icon: Smartphone },
 ];
 
 const TopNav = () => {

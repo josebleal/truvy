@@ -3,11 +3,8 @@ import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
 import HomePage from "@/screens/HomePage";
 import ScanID from "@/screens/ScanID";
-import UserWallet from "@/screens/UserWallet";
-import BankVerify from "@/screens/BankVerify";
-import TryItLive from "@/screens/TryItLive";
 
-const screens = [HomePage, ScanID, UserWallet, BankVerify, TryItLive];
+const screens = [HomePage, ScanID];
 
 const AppContent = () => {
   const { state } = useTruvy();

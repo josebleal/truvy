@@ -97,14 +97,6 @@ const HomePage = () => {
                 >
                   Try the Demo <ArrowRight size={15} className="ml-2" />
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => setCurrentScreen(5)}
-                  className="border-border/60 text-foreground hover:bg-muted/40 px-8 text-sm font-medium h-12 rounded-lg"
-                >
-                  Try It Live on Mobile
-                </Button>
               </motion.div>
           </div>
         </div>
@@ -416,8 +408,7 @@ const HomePage = () => {
               See It In Action
             </h2>
             <p className="text-muted-foreground mb-10 max-w-lg mx-auto text-lg leading-relaxed">
-              Walk through the full TruVy flow: scan an ID, issue a credential, view your wallet, 
-              verify with a bank, and test a forgery attack.
+              Walk through the full TruVy flow: scan an ID and issue a reusable digital credential.
             </p>
             <Button
               size="lg"
