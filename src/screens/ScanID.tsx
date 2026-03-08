@@ -1,10 +1,22 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { Upload, CheckCircle, Loader2, Camera, XCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Upload, CheckCircle, Loader2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
+
+const US_STATES = [
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware",
+  "Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky",
+  "Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi",
+  "Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
+  "New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania",
+  "Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont",
+  "Virginia","Washington","West Virginia","Wisconsin","Wyoming"
+];
 
 const ScanID = () => {
   const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue } = useTruvy();
@@ -15,6 +27,15 @@ const ScanID = () => {
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
   const [docType, setDocType] = useState<"passport" | "driver_license">("passport");
+
+  // Manual form state
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [manualCountry, setManualCountry] = useState("United States of America");
+  const [manualState, setManualState] = useState("Florida");
+  const [passportNumber, setPassportNumber] = useState("");
+  const [dob, setDob] = useState("");
+  const [manualError, setManualError] = useState("");
 
   const handleReset = useCallback(() => {
     setUploadedFile(null);
@@ -27,7 +48,21 @@ const ScanID = () => {
     setDocType(type);
     setDocumentType(type);
     handleReset();
+    setManualError("");
   };
+
+  // Age calculation (assuming current year is 2026)
+  const ageInfo = useMemo(() => {
+    if (!dob) return null;
+    const birthDate = new Date(dob);
+    const currentDate = new Date(2026, new Date().getMonth(), new Date().getDate());
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const monthDiff = currentDate.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && currentDate.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return { age, is18: age >= 18, is21: age >= 21 };
+  }, [dob]);
 
   const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,12 +100,11 @@ const ScanID = () => {
       setName(extractedName);
       setCountry(extractedCountry);
 
-      // Set location label/value based on document type
       if (docType === "driver_license") {
         setLocationLabel("Issuing State");
         setLocationValue(extractedState || extractedCountry);
       } else {
-        setLocationLabel("Document Country");
+        setLocationLabel("Country");
         setLocationValue(extractedCountry);
       }
 
@@ -116,6 +150,77 @@ const ScanID = () => {
       setVerifying(false);
     }
   }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue]);
+
+  const handleManualSubmit = async () => {
+    if (!firstName.trim() || !lastName.trim() || !dob) {
+      setManualError("Please fill in all required fields.");
+      return;
+    }
+    if (docType === "passport" && !passportNumber.trim()) {
+      setManualError("Please enter your passport number.");
+      return;
+    }
+
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+    const locationVal = docType === "passport" ? manualCountry : manualState;
+
+    setName(fullName);
+    setCountry(docType === "passport" ? manualCountry : "UNITED STATES OF AMERICA");
+    if (docType === "driver_license") {
+      setLocationLabel("Issuing State");
+      setLocationValue(manualState.toUpperCase());
+    } else {
+      setLocationLabel("Country");
+      setLocationValue(manualCountry.toUpperCase());
+    }
+
+    setVerifying(true);
+    setManualError("");
+
+    const steps = [
+      "Running biometric check...",
+      "Sanctions screening...",
+      "Age verification...",
+      "Issuing TruVy credential...",
+    ];
+
+    for (let i = 0; i < steps.length - 1; i++) {
+      setVerifyStep(i);
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+    setVerifyStep(steps.length - 1);
+
+    try {
+      const body: Record<string, string> = {
+        name: fullName,
+        country: docType === "passport" ? manualCountry : locationVal,
+        documentType: docType,
+        dateOfBirth: dob,
+      };
+      if (docType === "passport") {
+        body.documentNumber = passportNumber.trim();
+      }
+
+      const res = await fetch(`${API_BASE}/issue`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.token) {
+        setToken(data.token);
+        setQrBase64(data.qrBase64 || "");
+        setIssuedAt(new Date().toISOString());
+        setCurrentScreen(2);
+      } else {
+        setManualError("Failed to issue credential. Please try again.");
+        setVerifying(false);
+      }
+    } catch {
+      setManualError("Network error. Please try again.");
+      setVerifying(false);
+    }
+  };
 
   const handleProceed = async () => {
     if (!detected) return;
@@ -199,9 +304,9 @@ const ScanID = () => {
             </div>
           ))}
         </div>
-        {error && (
+        {(error || manualError) && (
           <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center">
-            {error}
+            {error || manualError}
           </div>
         )}
       </div>
@@ -215,7 +320,7 @@ const ScanID = () => {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Verify Your Identity</h1>
         <p className="text-muted-foreground">
-          Two-factor verification: upload your document and complete a face scan
+          Upload your document or enter your details manually
         </p>
       </div>
 
@@ -228,7 +333,7 @@ const ScanID = () => {
             className={cn(
               "px-5 py-2 rounded-full text-sm font-medium transition-all duration-200",
               docType === "passport"
-                ? "bg-green-600 text-white shadow-md"
+                ? "bg-primary text-primary-foreground shadow-md"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -240,7 +345,7 @@ const ScanID = () => {
             className={cn(
               "px-5 py-2 rounded-full text-sm font-medium transition-all duration-200",
               docType === "driver_license"
-                ? "bg-green-600 text-white shadow-md"
+                ? "bg-primary text-primary-foreground shadow-md"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -250,16 +355,13 @@ const ScanID = () => {
       </div>
 
       <div className="space-y-6 mb-8">
-        {/* Step 1: Document Upload */}
+        {/* Document Upload */}
         <div className="card-surface rounded-xl p-6 border border-border">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">1</span>
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Upload size={20} className="text-primary" />
-              {uploadLabel}
-            </h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4 ml-8">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-1">
+            <Upload size={20} className="text-primary" />
+            {uploadLabel}
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
             {docType === "passport" ? "Passport photo page" : "Front of Driver's License"} (JPG, JPEG, PDF)
           </p>
 
@@ -340,50 +442,122 @@ const ScanID = () => {
           )}
         </div>
 
-        {/* Step 2: Face Scan (cosmetic only) */}
-        <div className="card-surface rounded-xl p-6 border border-border">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <Camera size={20} className="text-primary" />
-              Face Scan
-            </h3>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4 ml-8">
-            Biometric verification to confirm your identity
-          </p>
+        {/* OR Divider */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs font-semibold text-muted-foreground tracking-wider">OR ENTER MANUALLY</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
 
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-8">
-            <div className="w-24 h-24 rounded-full border-4 border-muted-foreground/30 flex items-center justify-center mb-4">
-              <Camera className="text-muted-foreground" size={36} />
+        {/* Manual Entry Form */}
+        <div className="card-surface rounded-xl p-6 border border-border space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName" className="text-foreground">First Name</Label>
+              <Input
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="John"
+                className="bg-secondary border-border"
+              />
             </div>
-            <span className="text-sm text-muted-foreground mb-4">Position your face in the frame</span>
-            <Button
-              type="button"
-              className="bg-green-600 hover:bg-green-700 text-white px-6"
-              onClick={() => {}}
-            >
-              Start Face Scan
-            </Button>
+            <div className="space-y-2">
+              <Label htmlFor="lastName" className="text-foreground">Last Name</Label>
+              <Input
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Doe"
+                className="bg-secondary border-border"
+              />
+            </div>
           </div>
-        </div>
-      </div>
 
-      {error && (
-        <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center mb-6">
-          {error}
-        </div>
-      )}
+          {docType === "passport" ? (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="country" className="text-foreground">Country</Label>
+                <Input
+                  id="country"
+                  value={manualCountry}
+                  onChange={(e) => setManualCountry(e.target.value)}
+                  placeholder="United States of America"
+                  className="bg-secondary border-border"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="passportNum" className="text-foreground">Passport Number</Label>
+                <Input
+                  id="passportNum"
+                  value={passportNumber}
+                  onChange={(e) => setPassportNumber(e.target.value)}
+                  placeholder="AB1234567"
+                  className="bg-secondary border-border"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="state" className="text-foreground">State</Label>
+              <select
+                id="state"
+                value={manualState}
+                onChange={(e) => setManualState(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-border bg-secondary px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {US_STATES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
-      <div className="flex justify-center">
-        <Button
-          size="lg"
-          onClick={handleProceed}
-          disabled={!detected}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base"
-        >
-          Verify & Issue Credential →
-        </Button>
+          <div className="space-y-2">
+            <Label htmlFor="dob" className="text-foreground">Date of Birth</Label>
+            <Input
+              id="dob"
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="bg-secondary border-border"
+            />
+          </div>
+
+          {/* Age badges for Driver's License */}
+          {docType === "driver_license" && ageInfo && (
+            <div className="flex items-center gap-4 pt-1">
+              <div className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium",
+                ageInfo.is18 ? "bg-primary/20 text-primary" : "bg-destructive/20 text-destructive"
+              )}>
+                {ageInfo.is18 ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                18+
+              </div>
+              <div className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium",
+                ageInfo.is21 ? "bg-primary/20 text-primary" : "bg-destructive/20 text-destructive"
+              )}>
+                {ageInfo.is21 ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                21+
+              </div>
+            </div>
+          )}
+
+          {manualError && (
+            <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm text-center">
+              {manualError}
+            </div>
+          )}
+
+          <Button
+            onClick={handleManualSubmit}
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-base"
+            size="lg"
+          >
+            Verify & Issue Credential →
+          </Button>
+        </div>
       </div>
     </div>
   );
