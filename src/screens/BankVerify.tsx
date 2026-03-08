@@ -85,12 +85,17 @@ const BankVerify = () => {
           </p>
 
           {verifyResult === "idle" && (
-            <Button
-              onClick={handleVerifyReal}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
-              Verify Real Credential
-            </Button>
+            <div className="space-y-3">
+              <Button
+                onClick={handleVerifyReal}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                Verify Real Credential
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                Sends the cryptographic credential to our verification system. Uses RSA-2048 signature validation — zero raw documents transmitted.
+              </p>
+            </div>
           )}
 
           {verifyResult === "loading" && (
