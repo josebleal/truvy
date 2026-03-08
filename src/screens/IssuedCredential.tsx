@@ -1,6 +1,6 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ArrowRight, ShieldCheck, Copy } from "lucide-react";
+import { CheckCircle, ArrowRight, ShieldCheck, Copy, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
@@ -67,8 +67,15 @@ const IssuedCredential = () => {
           </div>
           <div className="flex justify-between items-center p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Age Verified</span>
-            <span className="text-primary font-medium flex items-center gap-1">
-              <CheckCircle size={14} /> 18+
+            <span className="flex items-center gap-2">
+              <span className={`font-medium flex items-center gap-1 ${state.ageVerified === "21+" || state.ageVerified === "18+" ? "text-primary" : "text-destructive"}`}>
+                {state.ageVerified === "21+" || state.ageVerified === "18+" ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                18+
+              </span>
+              <span className={`font-medium flex items-center gap-1 ${state.ageVerified === "21+" ? "text-primary" : "text-destructive"}`}>
+                {state.ageVerified === "21+" ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                21+
+              </span>
             </span>
           </div>
         </div>

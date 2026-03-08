@@ -19,7 +19,7 @@ const US_STATES = [
 ];
 
 const ScanID = () => {
-  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue } = useTruvy();
+  const { state, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue, setAgeVerified } = useTruvy();
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [detected, setDetected] = useState(false);
@@ -139,6 +139,7 @@ const ScanID = () => {
         setToken(issueData.token);
         setQrBase64(issueData.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
+        setAgeVerified(issueData.sharedClaims?.ageVerified || "");
         setCurrentScreen(2);
       } else {
         setError("Failed to issue credential. Please try again.");
@@ -149,7 +150,7 @@ const ScanID = () => {
       setProcessing(false);
       setVerifying(false);
     }
-  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue]);
+  }, [docType, setName, setCountry, setToken, setQrBase64, setIssuedAt, setCurrentScreen, setDocumentType, setLocationLabel, setLocationValue, setAgeVerified]);
 
   const handleManualSubmit = async () => {
     if (!firstName.trim() || !lastName.trim() || !dob) {
@@ -211,6 +212,7 @@ const ScanID = () => {
         setToken(data.token);
         setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
+        setAgeVerified(data.sharedClaims?.ageVerified || "");
         setCurrentScreen(2);
       } else {
         setManualError("Failed to issue credential. Please try again.");
@@ -256,6 +258,7 @@ const ScanID = () => {
         setToken(data.token);
         setQrBase64(data.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
+        setAgeVerified(data.sharedClaims?.ageVerified || "");
         setCurrentScreen(2);
       } else {
         setError("Failed to issue credential. Please try again.");
