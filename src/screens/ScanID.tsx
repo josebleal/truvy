@@ -102,21 +102,23 @@ const ScanID = () => {
       }
 
       const issueData = await issueRes.json();
-      if (issueData.token) {
-        setToken(issueData.token);
-        setQrBase64(issueData.qrBase64 || "");
-        setIssuedAt(new Date().toISOString());
-        if (issueData.name) setName(issueData.name);
-        if (issueData.country) setCountry(issueData.country);
-        if (issueData.state) {
-          setLocationLabel("Issuing State");
-          setLocationValue(issueData.state);
-        }
-        if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
-        if (issueData.documentType) setDocumentType(issueData.documentType);
-      } else {
-        setUploadError("Failed to issue credential. Please try again.");
-      }
+       if (issueData.token) {
+         setToken(issueData.token);
+         setQrBase64(issueData.qrBase64 || "");
+         setIssuedAt(new Date().toISOString());
+         if (issueData.name) setName(issueData.name);
+         if (issueData.country) setCountry(issueData.country);
+         if (issueData.state) {
+           setLocationLabel("Issuing State");
+           setLocationValue(issueData.state);
+         }
+         if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
+         if (issueData.documentType) setDocumentType(issueData.documentType);
+         // Auto-redirect to Issue tab on successful upload
+         setCurrentScreen(2);
+       } else {
+         setUploadError("Failed to issue credential. Please try again.");
+       }
     } catch {
       setUploadError("Failed to upload document. Please try again.");
     } finally {
