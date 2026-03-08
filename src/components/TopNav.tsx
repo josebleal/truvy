@@ -16,19 +16,22 @@ const TopNav = () => {
   const { state, setCurrentScreen } = useTruvy();
 
   return (
-    <nav className="w-full border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
+    <nav className="w-full border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center h-16 gap-8">
+        <div className="flex items-center h-14 gap-6">
           {/* Logo */}
           <button
             onClick={() => setCurrentScreen(0)}
-            className="shrink-0 flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="shrink-0 hover:opacity-80 transition-opacity"
           >
-            <img src={truvyLogo} alt="TruVy" className="h-8 w-auto" />
+            <img src={truvyLogo} alt="TruVy" className="h-7 w-auto" />
           </button>
 
+          {/* Divider */}
+          <div className="h-5 w-px bg-border/50 hidden sm:block" />
+
           {/* Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1">
+          <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide flex-1">
             {tabs.map((tab, i) => {
               const Icon = tab.icon;
               const isActive = state.currentScreen === i;
@@ -39,13 +42,13 @@ const TopNav = () => {
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium whitespace-nowrap transition-all",
                     isActive
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      ? "text-foreground bg-muted/60"
+                      : "text-muted-foreground hover:text-foreground/80"
                   )}
                 >
                   <Icon size={14} strokeWidth={1.5} />
-                  <span className="hidden md:inline">{tab.label}</span>
-                  <span className="md:hidden">{tab.label.split("—")[0].trim().split(" ")[0]}</span>
+                  <span className="hidden lg:inline">{tab.label}</span>
+                  <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
                 </button>
               );
             })}
@@ -53,10 +56,10 @@ const TopNav = () => {
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-[2px] bg-border">
+      {/* Thin progress bar */}
+      <div className="h-[1px] bg-border/30">
         <div
-          className="h-full bg-primary transition-all duration-500 ease-out"
+          className="h-full bg-primary/60 transition-all duration-700 ease-out"
           style={{ width: `${((state.currentScreen + 1) / tabs.length) * 100}%` }}
         />
       </div>
