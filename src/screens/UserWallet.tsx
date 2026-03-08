@@ -58,12 +58,20 @@ const UserWallet = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Holder</span>
-            <span className="text-foreground font-medium">{state.name}</span>
+            <span className="text-foreground font-medium">{state.name.toUpperCase()}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">{isDriverLicense ? "Issuing State" : "Document Country"}</span>
-            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
+            <span className="text-muted-foreground">Document Country</span>
+            <span className="text-foreground font-medium">
+              {isDriverLicense ? "UNITED STATES OF AMERICA" : (state.locationValue || state.country).toUpperCase()}
+            </span>
           </div>
+          {isDriverLicense && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Issuing State</span>
+              <span className="text-foreground font-medium">{(state.locationValue || "").toUpperCase()}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Issued</span>
             <span className="text-foreground font-medium">

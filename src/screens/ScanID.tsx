@@ -1,12 +1,24 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { CheckCircle, Loader2, XCircle, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const API_BASE = "https://truvy-kyc-passport-production.up.railway.app";
+
+const US_STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+  "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+  "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+  "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
+  "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
+  "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
+  "Wisconsin", "Wyoming",
+];
 
 const calculateAge = (dob: string): number => {
   const birth = new Date(dob);
@@ -25,13 +37,16 @@ const ScanID = () => {
   const [docType, setDocType] = useState<"passport" | "driver_license">("passport");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [country, setCountryField] = useState("Italy");
+  const [country, setCountryField] = useState("United States of America");
   const [stateField, setStateField] = useState("Florida");
   const [passportNumber, setPassportNumber] = useState("");
   const [dob, setDob] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [verifyStep, setVerifyStep] = useState(0);
   const [error, setError] = useState("");
+  const [issueComplete, setIssueComplete] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDocTypeChange = (type: "passport" | "driver_license") => {
     setDocType(type);
@@ -40,26 +55,10 @@ const ScanID = () => {
 
   const age = dob ? calculateAge(dob) : null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !dob) return;
-
-    const fullName = `${firstName.trim()} ${lastName.trim()}`;
-    setName(fullName);
-    setDateOfBirth(dob);
-
-    if (docType === "driver_license") {
-      setLocationLabel("Issuing State");
-      setLocationValue(stateField);
-      setCountry(stateField);
-    } else {
-      setLocationLabel("Document Country");
-      setLocationValue(country);
-      setCountry(country);
-    }
-
+  const runVerifyAnimation = async () => {
     setVerifying(true);
     setError("");
+    setIssueComplete(false);
 
     const steps = [
       "Running biometric check...",
@@ -73,6 +72,85 @@ const ScanID = () => {
       await new Promise((r) => setTimeout(r, 1000));
     }
     setVerifyStep(steps.length - 1);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    setUploadedFile(file);
+
+    const fullName = firstName.trim() && lastName.trim()
+      ? `${firstName.trim()} ${lastName.trim()}`
+      : "Document Upload";
+    setName(fullName);
+
+    if (docType === "driver_license") {
+      setLocationLabel("Issuing State");
+      setLocationValue(stateField);
+      setCountry("United States of America");
+    } else {
+      setLocationLabel("Document Country");
+      setLocationValue(country);
+      setCountry(country);
+    }
+
+    await runVerifyAnimation();
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("documentType", docType);
+
+      const issueRes = await fetch(`${API_BASE}/issue-from-document`, {
+        method: "POST",
+        body: formData,
+      });
+      const issueData = await issueRes.json();
+      if (issueData.token) {
+        setToken(issueData.token);
+        setQrBase64(issueData.qrBase64 || "");
+        setIssuedAt(new Date().toISOString());
+        if (issueData.name) setName(issueData.name);
+        if (issueData.dateOfBirth) setDateOfBirth(issueData.dateOfBirth);
+        setIssueComplete(true);
+      } else {
+        setError("Failed to issue credential. Please try again.");
+        setVerifying(false);
+      }
+    } catch {
+      setError("Network error. Please try again.");
+      setVerifying(false);
+    }
+  };
+
+  const handleFileDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileUpload(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstName.trim() || !lastName.trim() || !dob) return;
+
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+    setName(fullName);
+    setDateOfBirth(dob);
+
+    if (docType === "driver_license") {
+      setLocationLabel("Issuing State");
+      setLocationValue(stateField);
+      setCountry("United States of America");
+    } else {
+      setLocationLabel("Document Country");
+      setLocationValue(country);
+      setCountry(country);
+    }
+
+    await runVerifyAnimation();
 
     try {
       const body: Record<string, string> = {
@@ -97,7 +175,7 @@ const ScanID = () => {
         setToken(issueData.token);
         setQrBase64(issueData.qrBase64 || "");
         setIssuedAt(new Date().toISOString());
-        setCurrentScreen(2);
+        setIssueComplete(true);
       } else {
         setError("Failed to issue credential. Please try again.");
         setVerifying(false);
@@ -145,6 +223,14 @@ const ScanID = () => {
             </div>
           ))}
         </div>
+        {issueComplete && (
+          <Button
+            onClick={() => setCurrentScreen(2)}
+            className="w-full bg-green-600 hover:bg-green-700 text-white mt-4"
+          >
+            View Issued Credential
+          </Button>
+        )}
         {error && (
           <div className="bg-destructive/20 border border-destructive rounded-lg p-3 text-destructive text-sm w-full text-center">
             {error}
@@ -159,7 +245,7 @@ const ScanID = () => {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">Verify Your Identity</h1>
         <p className="text-muted-foreground">
-          Enter your document details below to get verified
+          Upload a document or enter your details below to get verified
         </p>
       </div>
 
@@ -193,6 +279,38 @@ const ScanID = () => {
         </div>
       </div>
 
+      {/* Upload Document Box */}
+      <div
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleFileDrop}
+        onClick={() => fileInputRef.current?.click()}
+        className="card-surface rounded-xl p-8 border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer mb-6 text-center"
+      >
+        <Upload className="mx-auto mb-3 text-muted-foreground" size={32} />
+        <p className="text-sm font-medium text-foreground mb-1">Upload Document</p>
+        <p className="text-xs text-muted-foreground">
+          Drag & drop or click to select — JPG, JPEG, or PDF
+        </p>
+        {uploadedFile && (
+          <p className="text-xs text-primary mt-2">{uploadedFile.name}</p>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".jpg,.jpeg,.pdf"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-xs text-muted-foreground uppercase">or enter manually</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
+      {/* Manual Entry Form */}
       <form onSubmit={handleSubmit} className="card-surface rounded-xl p-6 border border-border space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
@@ -222,7 +340,7 @@ const ScanID = () => {
               <Input
                 value={country}
                 onChange={(e) => setCountryField(e.target.value)}
-                placeholder="Italy"
+                placeholder="United States of America"
                 required
               />
             </div>
@@ -239,12 +357,16 @@ const ScanID = () => {
         ) : (
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground">State</label>
-            <Input
-              value={stateField}
-              onChange={(e) => setStateField(e.target.value)}
-              placeholder="Florida"
-              required
-            />
+            <Select value={stateField} onValueChange={setStateField}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a state" />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         )}
 

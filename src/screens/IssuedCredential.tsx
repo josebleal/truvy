@@ -62,12 +62,20 @@ const IssuedCredential = () => {
         <div className="space-y-3 text-sm">
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Full Name</span>
-            <span className="text-foreground font-medium">{state.name}</span>
+            <span className="text-foreground font-medium">{state.name.toUpperCase()}</span>
           </div>
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
-            <span className="text-muted-foreground">{isDriverLicense ? "Issuing State" : "Document Country"}</span>
-            <span className="text-foreground font-medium">{state.locationValue || state.country}</span>
+            <span className="text-muted-foreground">Document Country</span>
+            <span className="text-foreground font-medium">
+              {isDriverLicense ? "UNITED STATES OF AMERICA" : (state.locationValue || state.country).toUpperCase()}
+            </span>
           </div>
+          {isDriverLicense && (
+            <div className="flex justify-between p-3 rounded-lg bg-secondary">
+              <span className="text-muted-foreground">Issuing State</span>
+              <span className="text-foreground font-medium">{(state.locationValue || "").toUpperCase()}</span>
+            </div>
+          )}
           <div className="flex justify-between p-3 rounded-lg bg-secondary">
             <span className="text-muted-foreground">Issued At</span>
             <span className="text-foreground font-medium">
