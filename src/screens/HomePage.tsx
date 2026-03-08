@@ -181,8 +181,8 @@ const HomePage = () => {
               <div className="w-11 h-11 rounded-lg bg-primary/[0.08] flex items-center justify-center mb-5">
                 <BadgeCheck className="text-primary" size={20} />
               </div>
-              <h3 className="text-lg font-bold font-display text-foreground mb-2">Identity Issuers (like Jumio)</h3>
-              <p className="text-[14px] text-muted-foreground leading-relaxed mb-4">
+              <h3 className="text-xl font-bold font-display text-foreground mb-3">Identity Issuers (like Jumio)</h3>
+              <p className="text-base text-muted-foreground leading-relaxed mb-4">
                 Become a trusted credential issuer on the TruVy network. Sign portable 
                 credentials that any bank worldwide can verify instantly. Expand your reach 
                 beyond one-time verification into a recurring trust network.
