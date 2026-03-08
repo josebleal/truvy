@@ -237,6 +237,21 @@ const ScanID = () => {
                   <Loader2 className="animate-spin" size={16} />
                   <span className="text-sm">Processing document...</span>
                 </div>
+              ) : error ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-destructive text-sm font-medium">
+                    <XCircle size={16} />
+                    {error}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    className="text-destructive border-destructive hover:bg-destructive/10"
+                  >
+                    <XCircle size={14} className="mr-1" /> Try Again
+                  </Button>
+                </div>
               ) : detected ? (
                 <>
                   <div className="flex items-center gap-2 text-success text-sm font-medium">
