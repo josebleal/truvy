@@ -18,7 +18,7 @@ const Footer = () => {
           ))}
         </div>
         <p className="text-[11px] text-muted-foreground text-center">
-          TruVy — The Visa Network for Identity | support@truvy.net
+          TruVy — The Global Identity Network | support@truvy.net
         </p>
       </div>
     </footer>

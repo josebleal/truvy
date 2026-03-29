@@ -227,7 +227,7 @@ const HomePage = () => {
             </motion.h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 max-w-5xl mx-auto items-start">
             {/* Old Way */}
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={staggerContainer}
               className="card-surface rounded-xl p-8"
@@ -246,6 +246,16 @@ const HomePage = () => {
                 ))}
               </div>
             </motion.div>
+
+            {/* VS Divider */}
+            <div className="hidden md:flex flex-col items-center justify-center h-full">
+              <div className="w-px flex-1 bg-border" />
+              <span className="text-xs font-bold text-muted-foreground bg-muted rounded-full px-4 py-2 tracking-wider my-3">VS</span>
+              <div className="w-px flex-1 bg-border" />
+            </div>
+            <div className="flex md:hidden justify-center">
+              <span className="text-xs font-bold text-muted-foreground bg-muted rounded-full px-4 py-2 tracking-wider">VS</span>
+            </div>
 
             {/* TruVy Way */}
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={staggerContainer}
@@ -266,10 +276,6 @@ const HomePage = () => {
               </div>
             </motion.div>
           </div>
-
-          <div className="flex justify-center mt-8">
-            <span className="text-xs font-bold text-muted-foreground bg-muted rounded-full px-4 py-2 tracking-wider">VS</span>
-          </div>
         </div>
       </section>
 
@@ -283,7 +289,7 @@ const HomePage = () => {
             <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">About Us</motion.p>
             <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-6">Why We Built TruVy</motion.h2>
             <motion.p custom={2} variants={fadeUp} className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: why can't identity work like a Visa card? TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world.
+              We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: why can't identity work like global payment network infrastructure? TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world. TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world.
             </motion.p>
           </motion.div>
         </div>
