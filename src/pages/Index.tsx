@@ -5,7 +5,6 @@ import HomePage from "@/screens/HomePage";
 import ScanID from "@/screens/ScanID";
 import IssuedCredential from "@/screens/IssuedCredential";
 import UserWallet from "@/screens/UserWallet";
-import BankVerify from "@/screens/BankVerify";
 
 const AppContent = () => {
   const { state } = useTruvy();
@@ -18,8 +17,6 @@ const AppContent = () => {
         return <IssuedCredential />;
       case 3:
         return <UserWallet />;
-      case 4:
-        return <BankVerify />;
       default:
         return <HomePage />;
     }
