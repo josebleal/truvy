@@ -1,17 +1,18 @@
 import { useTruvy } from "@/context/TruvyContext";
+import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
-import { Home, ScanLine, BadgeCheck, Wallet, Building2, Smartphone, Lock } from "lucide-react";
+import { Home, ScanLine, BadgeCheck, Wallet, Lock, Sun, Moon } from "lucide-react";
 
 const tabs = [
   { label: "Home", icon: Home },
-  { label: "Scan ID", icon: ScanLine },
-  { label: "Issue", icon: BadgeCheck },
-  { label: "User Wallet", icon: Wallet },
-  { label: "Any Bank — Verify", icon: Building2 },
+  { label: "Verify", icon: ScanLine },
+  { label: "Credential", icon: BadgeCheck },
+  { label: "Wallet", icon: Wallet },
 ];
 
 const TopNav = () => {
   const { state, setCurrentScreen } = useTruvy();
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <nav className="w-full border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
@@ -28,7 +29,7 @@ const TopNav = () => {
 
           <div className="h-5 w-px bg-border/50 hidden sm:block" />
 
-          <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide flex-1">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1">
             {tabs.map((tab, i) => {
               const Icon = tab.icon;
               const isActive = state.currentScreen === i;
@@ -39,25 +40,32 @@ const TopNav = () => {
                   onClick={() => !isLocked && setCurrentScreen(i)}
                   disabled={isLocked}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
+                    "flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all min-w-[56px]",
                     isActive
-                      ? "text-foreground bg-muted/60"
+                      ? "text-primary bg-primary/10"
                       : isLocked
                       ? "text-muted-foreground/30 cursor-not-allowed"
                       : "text-muted-foreground hover:text-foreground/80"
                   )}
                 >
                   {isLocked ? (
-                    <Lock size={14} strokeWidth={1.5} className="text-muted-foreground/30" />
+                    <Lock size={16} strokeWidth={1.5} className="text-muted-foreground/30" />
                   ) : (
                     <Icon size={16} strokeWidth={1.5} />
                   )}
-                  <span className="hidden lg:inline">{tab.label}</span>
-                  <span className="lg:hidden hidden sm:inline">{tab.label.split("—")[0].trim()}</span>
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
           </div>
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
       </div>
 
