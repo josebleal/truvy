@@ -1,5 +1,6 @@
 import { useTruvy } from "@/context/TruvyContext";
-import { CheckCircle, ShieldCheck, Loader2 } from "lucide-react";
+import { CheckCircle, ShieldCheck, Loader2, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
