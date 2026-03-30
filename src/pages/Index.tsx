@@ -8,7 +8,7 @@ import IssuedCredential from "@/screens/IssuedCredential";
 import UserWallet from "@/screens/UserWallet";
 
 const AppContent = () => {
-  const { state, setCurrentScreen, setSessionId } = useTruvy();
+  const { state, setCurrentScreen, setSessionId, setToken } = useTruvy();
 
   // Handle URL params on mount (Persona callback & wallet redirect)
   useEffect(() => {
@@ -18,6 +18,7 @@ const AppContent = () => {
 
     if (inquiryId) {
       setSessionId(inquiryId);
+      setToken(inquiryId);
       setCurrentScreen(2);
       window.history.replaceState({}, "", "/");
     } else if (screenParam === "3" || screenParam === "wallet") {
