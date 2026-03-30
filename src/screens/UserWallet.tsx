@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Lock, Share2, Wallet } from "lucide-react";
+import { CheckCircle, Lock, Share2, Wallet, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useTruvy } from "@/context/TruvyContext";
@@ -38,13 +38,18 @@ const UserWallet = () => {
     );
   }
 
-  const activeCredentials = [
-    `Identity Verified — ${state.name || "Verified User"}`,
-    `${state.documentType === "driver_license" ? "Driver's License" : "Passport"} — ${state.locationValue || state.country || "Unknown"}`,
-    "Sanctions Screening — Clear",
-    "Liveness Check — Passed",
-    `Age Verification — ${state.ageVerified || "—"}`,
-    "Issued by: Persona · RSA-2048 Encrypted",
+  const displayName = state.name || "Verified User";
+  const displayCountry = state.locationValue || state.country || "Unknown";
+  const displayDocType = state.documentType === "driver_license" ? "Driver's License" : "Passport";
+  const displayAge = state.ageVerified === "21+" || state.ageVerified === "18+" ? `${state.ageVerified} ✅` : state.ageVerified === "under18" ? "Under 18 ❌" : "—";
+
+  const credentialFields = [
+    { label: "Country", value: displayCountry },
+    { label: "Document", value: displayDocType },
+    { label: "Age", value: displayAge },
+    { label: "Sanctions", value: "Clear ✅" },
+    { label: "Liveness", value: "Passed ✅" },
+    { label: "Issued by", value: "Persona" },
   ];
 
   return (
@@ -54,21 +59,62 @@ const UserWallet = () => {
         <p className="text-muted-foreground">Your verified credentials, ready to share with any institution worldwide</p>
       </motion.div>
 
-      {/* Active Credentials */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+      {/* Apple Wallet-style KYC Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 30, rotateX: 10 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ delay: 0.1, duration: 0.6, type: "spring" }}
         className="mb-10"
       >
         <h2 className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Verified Credentials</h2>
-        <div className="space-y-3">
-          {activeCredentials.map((cred, i) => (
-            <motion.div key={cred} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + i * 0.05 }}
-              className="card-surface rounded-xl p-4 flex items-center gap-3 border-primary/20"
-            >
-              <CheckCircle className="text-primary shrink-0" size={18} />
-              <span className="text-sm font-medium text-foreground">{cred}</span>
-            </motion.div>
-          ))}
+        <div className="relative group">
+          {/* Shimmer glow border */}
+          <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary/60 via-primary/20 to-primary/60 opacity-60 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+          
+          {/* Card */}
+          <div className="relative rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-primary/30 p-6 overflow-hidden">
+            {/* Subtle pattern overlay */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+              backgroundSize: '24px 24px',
+            }} />
+            
+            {/* Top row: logo + label */}
+            <div className="relative flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                  <Shield className="text-primary" size={16} />
+                </div>
+                <span className="text-white/90 font-bold text-sm tracking-wide">TruVy</span>
+              </div>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-medium">KYC Credential</span>
+            </div>
+
+            {/* Name */}
+            <div className="relative mb-6">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-white/40 mb-1">Verified Identity</p>
+              <p className="text-xl font-bold text-white tracking-wide font-display">{displayName}</p>
+            </div>
+
+            {/* Credential fields grid */}
+            <div className="relative grid grid-cols-2 gap-2">
+              {credentialFields.map((field) => (
+                <div key={field.label} className="flex items-center gap-2 bg-white/[0.06] rounded-lg px-3 py-2">
+                  <span className="text-[10px] uppercase tracking-wider text-white/40 shrink-0">{field.label}</span>
+                  <span className="text-xs text-white/90 font-medium ml-auto text-right">{field.value}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom: status badge */}
+            <div className="relative mt-5 flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="text-primary" size={14} />
+                <span className="text-xs text-primary font-medium">Verified</span>
+              </div>
+              <span className="text-[10px] text-white/30 font-mono">RSA-2048 Encrypted</span>
+            </div>
+          </div>
         </div>
       </motion.div>
 
