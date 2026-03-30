@@ -14,7 +14,7 @@ const providers = [
   { name: "Sumsub 🌍", logo: "https://logo.clearbit.com/sumsub.com", comingSoon: true },
 ];
 
-const PERSONA_URL = "https://withpersona.com/verify?inquiry-template-id=itmpl_cD8vUHZTdHuwUUbYgZuE9bu2M8NU&environment=sandbox";
+const PERSONA_URL = `https://withpersona.com/verify?inquiry-template-id=itmpl_cD8vUHZTdHuwUUbYgZuE9bu2M8NU&environment=sandbox&redirect-uri=${encodeURIComponent(window.location.origin + "/issue")}`;
 
 const ScanID = () => {
   const { setCurrentScreen, setToken, setName, setCountry, setIssuedAt, setLocationLabel, setLocationValue } = useTruvy();
