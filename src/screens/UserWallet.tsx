@@ -23,7 +23,7 @@ const UserWallet = () => {
   };
 
   // Empty state
-  if (!state.token && !state.name) {
+  if (!state.token && !state.name && state.credentials.length === 0) {
     return (
       <div className="max-w-lg mx-auto py-24 px-4 flex flex-col items-center gap-6 text-center">
         <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
@@ -38,18 +38,21 @@ const UserWallet = () => {
     );
   }
 
-  const displayName = state.name || "Verified User";
-  const displayCountry = state.locationValue || state.country || "Unknown";
-  const displayDocType = state.documentType === "driver_license" ? "Driver's License" : "Passport";
-  const displayAge = state.ageVerified === "21+" || state.ageVerified === "18+" ? `${state.ageVerified} ✅` : state.ageVerified === "under18" ? "Under 18 ❌" : "—";
+  const cred0 = state.credentials?.[0];
+  const displayName = cred0?.name || state.name || "Verified User";
+  const displayCountry = cred0?.country || state.locationValue || state.country || "Unknown";
+  const rawDocType = cred0?.documentType || state.documentType;
+  const displayDocType = rawDocType === "driver_license" ? "Driver's License" : "Passport";
+  const rawAge = cred0?.ageVerified || state.ageVerified;
+  const displayAge = rawAge === "21+" || rawAge === "18+" ? `${rawAge} ✅` : rawAge === "under18" ? "Under 18 ❌" : "—";
 
   const credentialFields = [
-    { label: "Country", value: displayCountry },
+    { label: "Country", value: displayCountry.toUpperCase() },
     { label: "Document", value: displayDocType },
     { label: "Age", value: displayAge },
     { label: "Sanctions", value: "Clear ✅" },
     { label: "Liveness", value: "Passed ✅" },
-    { label: "Issued by", value: "Persona" },
+    { label: "Issued by", value: cred0?.issuer || "Persona" },
   ];
 
   return (
@@ -68,18 +71,12 @@ const UserWallet = () => {
       >
         <h2 className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">Verified Credentials</h2>
         <div className="relative group">
-          {/* Shimmer glow border */}
           <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary/60 via-primary/20 to-primary/60 opacity-60 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
-          
-          {/* Card */}
           <div className="relative rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-primary/30 p-6 overflow-hidden">
-            {/* Subtle pattern overlay */}
             <div className="absolute inset-0 opacity-[0.03]" style={{
               backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
               backgroundSize: '24px 24px',
             }} />
-            
-            {/* Top row: logo + label */}
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
@@ -89,14 +86,10 @@ const UserWallet = () => {
               </div>
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-medium">KYC Credential</span>
             </div>
-
-            {/* Name */}
             <div className="relative mb-6">
               <p className="text-[10px] uppercase tracking-[0.15em] text-white/40 mb-1">Verified Identity</p>
               <p className="text-xl font-bold text-white tracking-wide font-display">{displayName}</p>
             </div>
-
-            {/* Credential fields grid */}
             <div className="relative grid grid-cols-2 gap-2">
               {credentialFields.map((field) => (
                 <div key={field.label} className="flex items-center gap-2 bg-white/[0.06] rounded-lg px-3 py-2">
@@ -105,8 +98,6 @@ const UserWallet = () => {
                 </div>
               ))}
             </div>
-
-            {/* Bottom: status badge */}
             <div className="relative mt-5 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <CheckCircle className="text-primary" size={14} />
