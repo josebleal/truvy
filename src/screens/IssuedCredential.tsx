@@ -5,34 +5,14 @@ import { useState, useEffect } from "react";
 
 const getString = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
-const getObject = (value: unknown): Record<string, unknown> | null => {
-  if (typeof value === "object" && value !== null) return value as Record<string, unknown>;
-  return null;
-};
-
-const decodeJwtPayload = (token: string): Record<string, unknown> | null => {
-  if (!token || token.split(".").length < 2) return null;
-
-  try {
-    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-    return JSON.parse(atob(padded)) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-};
-
-const calculateAgeVerified = (ageVerified: string, dateOfBirth: string) => {
-  if (ageVerified) return ageVerified;
-  if (!dateOfBirth) return "";
-
-  const birthDate = new Date(dateOfBirth);
+const calculateAgeFromBirthdate = (birthdate: string): string => {
+  if (!birthdate) return "";
+  const birthDate = new Date(birthdate);
   if (Number.isNaN(birthDate.getTime())) return "";
 
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age -= 1;
   }
@@ -42,19 +22,15 @@ const calculateAgeVerified = (ageVerified: string, dateOfBirth: string) => {
   return "under18";
 };
 
-const formatAgeDisplay = (ageVerified: string, dateOfBirth: string) => {
+const formatAgeDisplay = (ageVerified: string) => {
   if (ageVerified === "21+" || ageVerified === "18+") return `${ageVerified} ✅`;
   if (ageVerified === "under18") return "Under 18 ❌";
-  return dateOfBirth || "—";
+  return "—";
 };
-
-const formatDocumentType = (documentType: string) =>
-  documentType === "driver_license" ? "Driver's License" : "Passport";
 
 const IssuedCredential = () => {
   const {
     state,
-    setCurrentScreen,
     setName,
     setCountry,
     setIssuedAt,
@@ -62,8 +38,11 @@ const IssuedCredential = () => {
     setLocationValue,
     setAgeVerified,
   } = useTruvy();
+
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
+  const [fetched, setFetched] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   const steps = [
     "Verifying identity...",
@@ -72,67 +51,85 @@ const IssuedCredential = () => {
     "Issuing credential...",
   ];
 
-  const params = new URLSearchParams(window.location.search);
-  const inquiryId = params.get("inquiry-id") || "inq_sandbox_demo";
+  // Primary: from context (set by Index.tsx URL handler), fallback: URL param
+  const inquiryId = state.sessionId || new URLSearchParams(window.location.search).get("inquiry-id") || "";
 
-  const tokenPayload = decodeJwtPayload(state.token);
-  const sharedClaims = getObject(tokenPayload?.sharedClaims);
-  const claimName =
-    getString(sharedClaims?.name) ||
-    [getString(sharedClaims?.firstName), getString(sharedClaims?.lastName)].filter(Boolean).join(" ") ||
-    getString(tokenPayload?.name);
-  const claimCountry =
-    getString(sharedClaims?.country) ||
-    getString(sharedClaims?.state) ||
-    getString(tokenPayload?.country) ||
-    getString(tokenPayload?.state);
-  const claimLocationLabel = getString(sharedClaims?.state) || getString(tokenPayload?.state) ? "State" : "Country";
-  const claimDateOfBirth = getString(sharedClaims?.dateOfBirth) || getString(tokenPayload?.dateOfBirth);
-  const payloadIssuedAt = typeof tokenPayload?.iat === "number" ? new Date(tokenPayload.iat * 1000).toISOString() : "";
-  const claimIssuedAt = getString(sharedClaims?.issuedAt) || getString(tokenPayload?.issuedAt) || payloadIssuedAt;
-  const claimAgeVerified =
-    getString(sharedClaims?.ageVerified) || getString(tokenPayload?.ageVerified);
-  const displayName = state.name || claimName;
-  const displayCountry = state.country || claimCountry;
-  const displayLocationLabel =
-    state.locationLabel && state.locationLabel !== "Document Country" ? state.locationLabel : claimLocationLabel;
-  const displayLocationValue = state.locationValue || claimCountry;
-  const displayIssuedAt = state.issuedAt || claimIssuedAt;
-  const displayAgeVerified = calculateAgeVerified(state.ageVerified || claimAgeVerified, claimDateOfBirth);
-  const displayDocumentType = formatDocumentType(
-    getString(sharedClaims?.documentType) || getString(tokenPayload?.documentType) || state.documentType
-  );
-
+  // Fetch real data from Persona on mount
   useEffect(() => {
-    if (!state.name && claimName) setName(claimName);
-    if (!state.country && claimCountry) setCountry(claimCountry);
-    if ((!state.locationLabel || state.locationLabel === "Document Country") && claimLocationLabel) {
-      setLocationLabel(claimLocationLabel);
-    }
-    if (!state.locationValue && claimCountry) setLocationValue(claimCountry);
-    if (!state.issuedAt && claimIssuedAt) setIssuedAt(claimIssuedAt);
-    if (!state.ageVerified && displayAgeVerified) setAgeVerified(displayAgeVerified);
-  }, [
-    claimAgeVerified,
-    claimCountry,
-    claimIssuedAt,
-    claimLocationLabel,
-    claimName,
-    displayAgeVerified,
-    setAgeVerified,
-    setCountry,
-    setIssuedAt,
-    setLocationLabel,
-    setLocationValue,
-    setName,
-    state.ageVerified,
-    state.country,
-    state.issuedAt,
-    state.locationLabel,
-    state.locationValue,
-    state.name,
-  ]);
+    if (fetched) return;
 
+    const fetchPersonaData = async () => {
+      if (!inquiryId || inquiryId === "inq_sandbox_demo") {
+        // No real inquiry — use fallback values
+        if (!state.name) setName("Verified User");
+        if (!state.country) {
+          setCountry("Unknown");
+          setLocationLabel("Country");
+          setLocationValue("Unknown");
+        }
+        setIssuedAt(new Date().toISOString());
+        setFetched(true);
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://withpersona.com/api/v1/inquiries/${inquiryId}`, {
+          headers: {
+            "Authorization": "Bearer sandbox",
+            "Persona-Version": "2023-01-05",
+            "Key-Inflection": "camel",
+          },
+        });
+
+        if (!res.ok) throw new Error(`Persona API ${res.status}`);
+
+        const json = await res.json();
+        const attrs = json?.data?.attributes;
+        const included = json?.included as Array<{ type: string; attributes: Record<string, unknown> }> | undefined;
+
+        // Name
+        const firstName = getString(attrs?.nameFirst);
+        const lastName = getString(attrs?.nameLast);
+        const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Verified User";
+        if (!state.name) setName(fullName.toUpperCase());
+
+        // Country from government-id verification
+        const govId = included?.find((item) => item.type === "verification/government-id");
+        const countryCode = getString(govId?.attributes?.countryCode) || getString(attrs?.countryCode) || "Unknown";
+        if (!state.country) {
+          setCountry(countryCode);
+          setLocationLabel("Country");
+          setLocationValue(countryCode.toUpperCase());
+        }
+
+        // Age from birthdate
+        const birthdate = getString(attrs?.birthdate);
+        if (birthdate && !state.ageVerified) {
+          const ageResult = calculateAgeFromBirthdate(birthdate);
+          if (ageResult) setAgeVerified(ageResult);
+        }
+
+        setIssuedAt(new Date().toISOString());
+      } catch (err) {
+        console.error("Failed to fetch Persona inquiry:", err);
+        setFetchError(true);
+        // Fallback values
+        if (!state.name) setName("Verified User");
+        if (!state.country) {
+          setCountry("Unknown");
+          setLocationLabel("Country");
+          setLocationValue("Unknown");
+        }
+        setIssuedAt(new Date().toISOString());
+      } finally {
+        setFetched(true);
+      }
+    };
+
+    fetchPersonaData();
+  }, [inquiryId, fetched]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Step animation + redirect to wallet via URL so we stay in the same TruvyProvider
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
@@ -143,13 +140,13 @@ const IssuedCredential = () => {
         clearInterval(interval);
         setDone(true);
         setTimeout(() => {
-          setCurrentScreen(3);
+          window.location.href = "/?screen=3";
         }, 1500);
       }
     }, 800);
 
     return () => clearInterval(interval);
-  }, [setCurrentScreen, steps.length]);
+  }, [steps.length]);
 
   if (!done) {
     return (
@@ -159,16 +156,16 @@ const IssuedCredential = () => {
         </div>
         <h2 className="text-2xl font-bold text-foreground font-display">Processing Credential</h2>
         <div className="w-full space-y-3">
-          {steps.map((s, i) => (
+          {steps.map((s, idx) => (
             <div
-              key={i}
+              key={idx}
               className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-500 ${
-                i < step ? "card-surface" : i === step ? "card-surface glow-cyan" : "opacity-30"
+                idx < step ? "card-surface" : idx === step ? "card-surface glow-cyan" : "opacity-30"
               }`}
             >
-              {i < step ? (
+              {idx < step ? (
                 <CheckCircle className="text-primary shrink-0" size={20} />
-              ) : i === step ? (
+              ) : idx === step ? (
                 <Loader2 className="text-primary animate-spin shrink-0" size={20} />
               ) : (
                 <div className="w-5 h-5 rounded-full border border-border shrink-0" />
@@ -180,6 +177,12 @@ const IssuedCredential = () => {
       </div>
     );
   }
+
+  const displayName = state.name || "Verified User";
+  const displayCountry = state.locationValue || state.country || "Unknown";
+  const displayLocationLabel = state.locationLabel || "Country";
+  const displayAgeVerified = state.ageVerified || "—";
+  const displayDocumentType = state.documentType === "driver_license" ? "Driver's License" : "Passport";
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
@@ -208,15 +211,15 @@ const IssuedCredential = () => {
         </div>
         <div className="space-y-3 text-sm">
           {[
-            { label: "Name", value: displayName || "—" },
-            { label: displayLocationLabel, value: displayLocationValue || displayCountry || "—" },
+            { label: "Name", value: displayName },
+            { label: displayLocationLabel, value: displayCountry },
             { label: "Document", value: displayDocumentType },
             { label: "Status", value: "Verified ✅" },
             { label: "Sanctions", value: "Clear ✅" },
             { label: "Liveness", value: "Passed ✅" },
-            { label: "Age Verification", value: formatAgeDisplay(displayAgeVerified, claimDateOfBirth) },
+            { label: "Age Verification", value: formatAgeDisplay(displayAgeVerified) },
             { label: "Issued by", value: "Persona (Sandbox)" },
-            { label: "Inquiry ID", value: inquiryId },
+            { label: "Inquiry ID", value: inquiryId || "inq_sandbox_demo" },
           ].map((row) => (
             <div key={row.label} className="flex justify-between p-3 rounded-lg bg-secondary">
               <span className="text-muted-foreground">{row.label}</span>
@@ -238,9 +241,7 @@ const IssuedCredential = () => {
         </pre>
       </motion.div>
 
-      <p className="text-center text-sm text-muted-foreground animate-pulse">
-        {displayIssuedAt ? `Issued ${new Date(displayIssuedAt).toLocaleString()} · Redirecting to wallet...` : "Redirecting to wallet..."}
-      </p>
+      <p className="text-center text-sm text-muted-foreground animate-pulse">Redirecting to wallet...</p>
     </div>
   );
 };
