@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { TruvyProvider, useTruvy } from "@/context/TruvyContext";
 import TopNav from "@/components/TopNav";
 import Footer from "@/components/Footer";
@@ -7,7 +8,23 @@ import IssuedCredential from "@/screens/IssuedCredential";
 import UserWallet from "@/screens/UserWallet";
 
 const AppContent = () => {
-  const { state } = useTruvy();
+  const { state, setCurrentScreen, setSessionId } = useTruvy();
+
+  // Handle URL params on mount (Persona callback & wallet redirect)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const inquiryId = params.get("inquiry-id");
+    const screenParam = params.get("screen");
+
+    if (inquiryId) {
+      setSessionId(inquiryId);
+      setCurrentScreen(2);
+      window.history.replaceState({}, "", "/");
+    } else if (screenParam === "3" || screenParam === "wallet") {
+      setCurrentScreen(3);
+      window.history.replaceState({}, "", "/");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderScreen = () => {
     switch (state.currentScreen) {
