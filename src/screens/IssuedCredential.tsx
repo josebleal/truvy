@@ -58,6 +58,7 @@ const IssuedCredential = () => {
 
   // Fetch real data from Persona on mount
   useEffect(() => {
+    if (!inquiryId) return;
     if (fetched) return;
 
     const fetchPersonaData = async () => {
@@ -133,6 +134,7 @@ const IssuedCredential = () => {
 
   // Step animation + redirect to wallet via URL so we stay in the same TruvyProvider
   useEffect(() => {
+    if (!inquiryId) return;
     let i = 0;
     const interval = setInterval(() => {
       i++;
