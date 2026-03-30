@@ -1,16 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Lock, Share2 } from "lucide-react";
+import { CheckCircle, Lock, Share2, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-
-const activeCredentials = [
-  "Identity Verified — Maria Silva",
-  "Passport — Brazil 🇧🇷",
-  "Sanctions Screening — Clear",
-  "Liveness Check — Passed",
-  "Age Verification — 18+",
-  "Issued by: Persona · RSA-2048 Encrypted",
-];
+import { useTruvy } from "@/context/TruvyContext";
 
 const upcomingCredentials = [
   "Anti-Money Laundering (AML) Check",
@@ -24,10 +16,36 @@ const upcomingCredentials = [
 
 const UserWallet = () => {
   const { toast } = useToast();
+  const { state, setCurrentScreen } = useTruvy();
 
   const handleShare = () => {
     toast({ title: "Credential shared securely", description: "No raw documents transmitted." });
   };
+
+  // Empty state
+  if (!state.token && !state.name) {
+    return (
+      <div className="max-w-lg mx-auto py-24 px-4 flex flex-col items-center gap-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+          <Wallet className="text-muted-foreground" size={28} />
+        </div>
+        <h2 className="text-2xl font-bold text-foreground font-display">Your Wallet is Empty</h2>
+        <p className="text-muted-foreground max-w-sm">Verify your identity once to unlock your portable digital credentials.</p>
+        <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
+          Get Verified →
+        </Button>
+      </div>
+    );
+  }
+
+  const activeCredentials = [
+    `Identity Verified — ${state.name || "Verified User"}`,
+    `${state.documentType === "driver_license" ? "Driver's License" : "Passport"} — ${state.locationValue || state.country || "Unknown"}`,
+    "Sanctions Screening — Clear",
+    "Liveness Check — Passed",
+    `Age Verification — ${state.ageVerified || "—"}`,
+    "Issued by: Persona · RSA-2048 Encrypted",
+  ];
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
