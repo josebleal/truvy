@@ -1,5 +1,5 @@
 import { useTruvy } from "@/context/TruvyContext";
-import { CheckCircle, ShieldCheck, Loader2, Lock } from "lucide-react";
+import { CheckCircle, ShieldCheck, Loader2, Lock, Car, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -41,6 +41,8 @@ const IssuedCredential = () => {
     setLocationValue,
     setAgeVerified,
     setDocumentType,
+    setSessionId,
+    addCredential,
   } = useTruvy();
 
   const [step, setStep] = useState(0);
@@ -55,8 +57,10 @@ const IssuedCredential = () => {
     "Issuing credential...",
   ];
 
-  // Primary: from context (set by Index.tsx URL handler), fallback: URL param
   const inquiryId = state.sessionId || new URLSearchParams(window.location.search).get("inquiry-id") || "";
+
+  // Already verified — no pending session
+  const alreadyVerified = !!state.token && !state.sessionId && state.credentials.length > 0;
 
   // Fetch real data from Persona on mount
   useEffect(() => {
@@ -64,8 +68,12 @@ const IssuedCredential = () => {
     if (fetched) return;
 
     const fetchPersonaData = async () => {
+      let fullName = "Verified User";
+      let countryCode = "Unknown";
+      let idClass = "pp";
+      let ageResult = "";
+
       if (!inquiryId || inquiryId === "inq_sandbox_demo") {
-        // No real inquiry — use fallback values
         if (!state.name) setName("Verified User");
         if (!state.country) {
           setCountry("Unknown");
@@ -74,6 +82,16 @@ const IssuedCredential = () => {
         }
         setIssuedAt(new Date().toISOString());
         setToken(inquiryId);
+        addCredential({
+          inquiryId,
+          name: state.name || "Verified User",
+          country: state.country || "Unknown",
+          documentType: "passport",
+          ageVerified: "",
+          issuedAt: new Date().toISOString(),
+          issuer: "Persona",
+        });
+        setSessionId("");
         setFetched(true);
         return;
       }
@@ -93,29 +111,25 @@ const IssuedCredential = () => {
         const attrs = json?.data?.attributes;
         const fields = attrs?.fields as Record<string, { value: unknown }> | undefined;
 
-        // Name from fields
         const firstName = getString(fields?.nameFirst?.value);
         const lastName = getString(fields?.nameLast?.value);
-        const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Verified User";
+        fullName = [firstName, lastName].filter(Boolean).join(" ") || "Verified User";
         setName(fullName.toUpperCase());
 
-        // Country from fields
-        const countryCode = getString(fields?.addressCountryCode?.value) || "Unknown";
+        countryCode = getString(fields?.addressCountryCode?.value) || "Unknown";
         setCountry(countryCode);
         setLocationLabel("Country");
         setLocationValue(countryCode.toUpperCase());
 
-        // Document type from included government-id verification
         const govId = (json?.included as Array<{ type: string; attributes: Record<string, unknown> }>)
           ?.find((item) => item.type === "verification/government-id");
-        const idClass = getString(govId?.attributes?.idClass);
+        idClass = getString(govId?.attributes?.idClass) || "pp";
         if (idClass === "dl") setDocumentType("driver_license");
         else setDocumentType("passport");
 
-        // Birthdate from fields
         const birthdate = getString(fields?.birthdate?.value);
         if (birthdate) {
-          const ageResult = calculateAgeFromBirthdate(birthdate);
+          ageResult = calculateAgeFromBirthdate(birthdate);
           if (ageResult) setAgeVerified(ageResult);
         }
 
@@ -124,7 +138,8 @@ const IssuedCredential = () => {
       } catch (err) {
         console.error("Failed to fetch Persona inquiry:", err);
         setFetchError(true);
-        // Fallback values
+        fullName = state.name || "Verified User";
+        countryCode = state.country || "Unknown";
         if (!state.name) setName("Verified User");
         if (!state.country) {
           setCountry("Unknown");
@@ -133,17 +148,29 @@ const IssuedCredential = () => {
         }
         setIssuedAt(new Date().toISOString());
         setToken(inquiryId);
-      } finally {
-        setFetched(true);
       }
+
+      addCredential({
+        inquiryId,
+        name: fullName,
+        country: countryCode,
+        documentType: idClass === "dl" ? "driver_license" : "passport",
+        ageVerified: ageResult,
+        issuedAt: new Date().toISOString(),
+        issuer: "Persona",
+      });
+      setSessionId("");
+      setFetched(true);
     };
 
     fetchPersonaData();
   }, [inquiryId, fetched]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Step animation + redirect to wallet via URL so we stay in the same TruvyProvider
+  // Step animation
   useEffect(() => {
     if (!inquiryId) return;
+    if (state.token && !state.sessionId) return;
+
     let i = 0;
     const interval = setInterval(() => {
       i++;
@@ -159,7 +186,64 @@ const IssuedCredential = () => {
     }, 800);
 
     return () => clearInterval(interval);
-  }, [steps.length, inquiryId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [steps.length, inquiryId, state.token, state.sessionId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Already verified view ──
+  if (alreadyVerified) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 px-4">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="text-center mb-10">
+          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6 glow-primary">
+            <CheckCircle className="text-primary" size={40} />
+          </div>
+          <h1 className="text-3xl font-bold font-display text-foreground mb-2">Credential Verified</h1>
+          <p className="text-muted-foreground">Your verified credentials are shown below.</p>
+        </motion.div>
+
+        <div className="space-y-4 mb-8">
+          {state.credentials.map((cred, i) => (
+            <motion.div
+              key={cred.inquiryId + i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="card-surface rounded-xl p-5 flex items-start gap-4"
+            >
+              <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                {cred.documentType === "driver_license" ? (
+                  <Car className="text-primary" size={20} />
+                ) : (
+                  <BookOpen className="text-primary" size={20} />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-sm font-bold text-foreground font-display">
+                    {cred.country?.toUpperCase() || "—"}{" "}
+                    {cred.documentType === "driver_license" ? "Driver's License" : "Passport"}
+                    <span className="text-muted-foreground font-normal"> · {cred.issuer}</span>
+                  </h3>
+                </div>
+                <p className="text-sm text-foreground/80">{cred.name || "Verified User"}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Issued {cred.issuedAt ? new Date(cred.issuedAt).toLocaleDateString() : "—"}
+                </p>
+              </div>
+              <span className="text-xs text-primary bg-primary/10 rounded-full px-3 py-1 font-medium shrink-0">
+                Verified ✅
+              </span>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
+            Verify Another Document →
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Empty state — no credential yet
   if (!state.token && !state.name) {
