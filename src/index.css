@@ -204,6 +204,16 @@
     animation: pulse-glow 3s ease-in-out infinite;
   }
 
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.333%); }
+  }
+
   .wallet-card {
     transform: perspective(800px) rotateY(-5deg) rotateX(3deg);
     transition: transform 0.3s ease;
