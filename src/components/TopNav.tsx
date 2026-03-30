@@ -1,7 +1,7 @@
 import { useTruvy } from "@/context/TruvyContext";
 import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
-import { Home, ScanLine, BadgeCheck, Wallet, Lock, Sun, Moon } from "lucide-react";
+import { Home, ScanLine, BadgeCheck, Wallet, Sun, Moon } from "lucide-react";
 
 const tabs = [
   { label: "Home", icon: Home },
@@ -33,26 +33,18 @@ const TopNav = () => {
             {tabs.map((tab, i) => {
               const Icon = tab.icon;
               const isActive = state.currentScreen === i;
-              const isLocked = i >= 2 && !state.token;
               return (
                 <button
                   key={i}
-                  onClick={() => !isLocked && setCurrentScreen(i)}
-                  disabled={isLocked}
+                  onClick={() => setCurrentScreen(i)}
                   className={cn(
                     "flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all min-w-[56px]",
                     isActive
                       ? "text-primary bg-primary/10"
-                      : isLocked
-                      ? "text-muted-foreground/30 cursor-not-allowed"
                       : "text-muted-foreground hover:text-foreground/80"
                   )}
                 >
-                  {isLocked ? (
-                    <Lock size={16} strokeWidth={1.5} className="text-muted-foreground/30" />
-                  ) : (
-                    <Icon size={16} strokeWidth={1.5} />
-                  )}
+                  <Icon size={16} strokeWidth={1.5} />
                   <span>{tab.label}</span>
                 </button>
               );

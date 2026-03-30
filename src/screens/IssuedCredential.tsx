@@ -1,5 +1,6 @@
 import { useTruvy } from "@/context/TruvyContext";
-import { CheckCircle, ShieldCheck, Loader2 } from "lucide-react";
+import { CheckCircle, ShieldCheck, Loader2, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -31,6 +32,7 @@ const formatAgeDisplay = (ageVerified: string) => {
 const IssuedCredential = () => {
   const {
     state,
+    setCurrentScreen,
     setName,
     setCountry,
     setIssuedAt,
@@ -147,6 +149,22 @@ const IssuedCredential = () => {
 
     return () => clearInterval(interval);
   }, [steps.length]);
+
+  // Empty state — no credential yet
+  if (!state.token && !state.name) {
+    return (
+      <div className="max-w-lg mx-auto py-24 px-4 flex flex-col items-center gap-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+          <Lock className="text-muted-foreground" size={28} />
+        </div>
+        <h2 className="text-2xl font-bold text-foreground font-display">Your Credential Awaits</h2>
+        <p className="text-muted-foreground max-w-sm">Complete your identity verification to receive your TruVy Digital Passport.</p>
+        <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
+          Start Verification →
+        </Button>
+      </div>
+    );
+  }
 
   if (!done) {
     return (
