@@ -40,6 +40,7 @@ const IssuedCredential = () => {
     setLocationLabel,
     setLocationValue,
     setAgeVerified,
+    setDocumentType,
   } = useTruvy();
 
   const [step, setStep] = useState(0);
@@ -90,26 +91,30 @@ const IssuedCredential = () => {
 
         const json = await res.json();
         const attrs = json?.data?.attributes;
-        const included = json?.included as Array<{ type: string; attributes: Record<string, unknown> }> | undefined;
+        const fields = attrs?.fields as Record<string, { value: unknown }> | undefined;
 
-        // Name
-        const firstName = getString(attrs?.nameFirst);
-        const lastName = getString(attrs?.nameLast);
+        // Name from fields
+        const firstName = getString(fields?.nameFirst?.value);
+        const lastName = getString(fields?.nameLast?.value);
         const fullName = [firstName, lastName].filter(Boolean).join(" ") || "Verified User";
-        if (!state.name) setName(fullName.toUpperCase());
+        setName(fullName.toUpperCase());
 
-        // Country from government-id verification
-        const govId = included?.find((item) => item.type === "verification/government-id");
-        const countryCode = getString(govId?.attributes?.countryCode) || getString(attrs?.countryCode) || "Unknown";
-        if (!state.country) {
-          setCountry(countryCode);
-          setLocationLabel("Country");
-          setLocationValue(countryCode.toUpperCase());
-        }
+        // Country from fields
+        const countryCode = getString(fields?.addressCountryCode?.value) || "Unknown";
+        setCountry(countryCode);
+        setLocationLabel("Country");
+        setLocationValue(countryCode.toUpperCase());
 
-        // Age from birthdate
-        const birthdate = getString(attrs?.birthdate);
-        if (birthdate && !state.ageVerified) {
+        // Document type from included government-id verification
+        const govId = (json?.included as Array<{ type: string; attributes: Record<string, unknown> }>)
+          ?.find((item) => item.type === "verification/government-id");
+        const idClass = getString(govId?.attributes?.idClass);
+        if (idClass === "dl") setDocumentType("driver_license");
+        else setDocumentType("passport");
+
+        // Birthdate from fields
+        const birthdate = getString(fields?.birthdate?.value);
+        if (birthdate) {
           const ageResult = calculateAgeFromBirthdate(birthdate);
           if (ageResult) setAgeVerified(ageResult);
         }
