@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTruvy } from "@/context/TruvyContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Clock, Users, DollarSign, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck, X, Check, Mail, Globe2 } from "lucide-react";
+import { ArrowRight, Clock, Users, DollarSign, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck, X, Check, Mail, Globe2, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,6 +46,10 @@ const stats = [
   { value: "$22M", desc: "Annual KYC cost per institution", icon: ShieldCheck },
 ];
 
+const trustedLogos = [
+  "Persona", "Plaid", "Socure", "Onfido", "Jumio", "Alloy",
+];
+
 const HomePage = () => {
   const { setCurrentScreen } = useTruvy();
   const { toast } = useToast();
@@ -65,49 +69,132 @@ const HomePage = () => {
     <div className="min-h-screen">
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-transparent" />
+        {/* Gradient mesh background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-transparent to-accent/[0.04]" />
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary/[0.03] rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4" />
+          {/* Geometric pattern */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-foreground" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+
         <div className="max-w-7xl mx-auto px-6 pt-24 pb-20 md:pt-36 md:pb-32 relative z-10">
-          <div className="max-w-3xl">
-            <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] text-primary text-xs font-medium mb-8 tracking-wide"
-            >
-              <Lock size={11} />
-              Portable Digital Identity for Global Finance
-            </motion.div>
-            <motion.h1 initial="hidden" animate="visible" custom={1} variants={fadeUp}
-              className="text-5xl md:text-6xl lg:text-7xl font-bold font-display text-foreground mb-6 leading-[1.05] tracking-tight"
-            >
-              Verify Once.{" "}
-              <span className="gradient-text">Use Anywhere.</span>
-            </motion.h1>
-            <motion.p initial="hidden" animate="visible" custom={2} variants={fadeUp}
-              className="text-lg md:text-xl text-muted-foreground max-w-xl mb-10 leading-relaxed"
-            >
-              Get verified once with a trusted issuer and share your credentials
-              with any bank in the world, without ever transmitting raw documents.
-            </motion.p>
-            <motion.div initial="hidden" animate="visible" custom={3} variants={fadeUp}>
-              <Button size="lg" onClick={() => setCurrentScreen(1)}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-12 rounded-lg"
+          <div className="grid md:grid-cols-[1fr_auto] gap-12 items-center">
+            <div className="max-w-3xl">
+              <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/[0.06] text-primary text-xs font-medium mb-8 tracking-wide backdrop-blur-sm"
               >
-                Try the Demo <ArrowRight size={15} className="ml-2" />
-              </Button>
+                <Lock size={11} />
+                Portable Digital Identity for Global Finance
+              </motion.div>
+              <motion.h1 initial="hidden" animate="visible" custom={1} variants={fadeUp}
+                className="text-5xl md:text-6xl lg:text-7xl font-bold font-display text-foreground mb-6 leading-[1.05] tracking-tight"
+              >
+                Verify Once.{" "}
+                <span className="gradient-text">Use Anywhere.</span>
+              </motion.h1>
+              <motion.p initial="hidden" animate="visible" custom={2} variants={fadeUp}
+                className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 leading-relaxed"
+              >
+                Get verified once with a trusted issuer and share your credentials
+                with any bank in the world, without ever transmitting raw documents.
+              </motion.p>
+
+              {/* Country flags */}
+              <motion.div initial="hidden" animate="visible" custom={2.5} variants={fadeUp}
+                className="flex items-center gap-3 mb-10"
+              >
+                <span className="text-2xl tracking-widest">🇧🇷 🇺🇸 🇩🇪 🇸🇬 🇬🇧 🇨🇦</span>
+                <span className="text-xs text-muted-foreground font-medium">Available globally</span>
+              </motion.div>
+
+              <motion.div initial="hidden" animate="visible" custom={3} variants={fadeUp}>
+                <Button size="lg" onClick={() => setCurrentScreen(1)}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-sm font-semibold h-12 rounded-lg shadow-lg shadow-primary/20"
+                >
+                  Try the Demo <ArrowRight size={15} className="ml-2" />
+                </Button>
+              </motion.div>
+            </div>
+
+            {/* Floating credential card mockup */}
+            <motion.div
+              initial={{ opacity: 0, y: 40, rotateY: -8 }}
+              animate={{ opacity: 1, y: 0, rotateY: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
+              className="hidden md:block"
+            >
+              <div className="relative">
+                {/* Glow behind card */}
+                <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-2xl scale-95" />
+                <div className="relative w-72 rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-xl p-6 shadow-2xl shadow-primary/10">
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <ShieldCheck className="text-primary" size={16} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-foreground font-display">TruVy Passport</p>
+                      <p className="text-[10px] text-muted-foreground">Digital Identity Credential</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2.5 text-xs">
+                    {[
+                      { l: "Identity", v: "Verified ✅" },
+                      { l: "Sanctions", v: "Clear ✅" },
+                      { l: "Liveness", v: "Passed ✅" },
+                      { l: "Age", v: "21+ ✅" },
+                    ].map((r) => (
+                      <div key={r.l} className="flex justify-between p-2 rounded-lg bg-secondary/60">
+                        <span className="text-muted-foreground">{r.l}</span>
+                        <span className="text-foreground font-medium">{r.v}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-border/50">
+                    <p className="text-[9px] text-muted-foreground/60 font-mono">RSA-2048 · W3C Verifiable Credential</p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
+      {/* Trusted By */}
+      <section className="border-y border-border/40 bg-secondary/30">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em] shrink-0">Trusted by leading providers</p>
+            <div className="flex flex-wrap items-center gap-3 justify-center">
+              {trustedLogos.map((name) => (
+                <span key={name} className="text-xs font-semibold text-muted-foreground/60 bg-card border border-border/50 rounded-full px-4 py-1.5 tracking-wide">
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Who We Serve */}
-      <section className="border-y border-border/40">
+      <section className="border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className="text-center mb-14">
             <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">Who We Serve</motion.p>
             <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground">Built for the Financial Ecosystem</motion.h2>
           </motion.div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
               { icon: Building2, title: "Banks & Financial Institutions", desc: "Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials and eliminate redundant KYC checks.", tags: ["Faster Onboarding", "Lower KYC Costs", "Higher Conversion"] },
               { icon: BadgeCheck, title: "Identity Issuers", desc: "Become a trusted credential issuer on the TruVy network. Sign portable credentials that any bank worldwide can verify instantly.", tags: ["Issue Credentials", "Network Revenue", "Global Reach"] },
+              { icon: User, title: "Individuals & Expats", desc: "Verify once with a trusted issuer and reuse your credential at any bank worldwide — no repeated document uploads, no friction.", tags: ["One-Time Verification", "Global Portability", "Privacy First"] },
             ].map((item, i) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} custom={i} variants={fadeUp}
                 className="card-surface rounded-xl p-8 group hover:border-primary/20 transition-colors duration-300"
@@ -180,7 +267,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Maria's Story (condensed) */}
+      {/* Maria's Story */}
       <section className="max-w-7xl mx-auto px-6 py-24">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} className="text-center mb-14">
           <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">Real Story. Real Impact.</motion.p>
@@ -289,7 +376,7 @@ const HomePage = () => {
             <motion.p custom={0} variants={fadeUp} className="text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-3">About Us</motion.p>
             <motion.h2 custom={1} variants={fadeUp} className="text-3xl md:text-4xl font-bold font-display text-foreground mb-6">Why We Built TruVy</motion.h2>
             <motion.p custom={2} variants={fadeUp} className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: why can't identity work like global payment network infrastructure? TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world. TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world.
+              We are international students who experienced firsthand the frustration of re-verifying our identity every time we opened a bank account in a new country. We asked: why can't identity work like global payment network infrastructure? TruVy is our answer — verify once with a trusted issuer, and use your credential anywhere in the world.
             </motion.p>
           </motion.div>
         </div>

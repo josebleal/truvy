@@ -35,6 +35,7 @@ const IssuedCredential = () => {
     setCurrentScreen,
     setName,
     setCountry,
+    setToken,
     setIssuedAt,
     setLocationLabel,
     setLocationValue,
@@ -71,6 +72,7 @@ const IssuedCredential = () => {
           setLocationValue("Unknown");
         }
         setIssuedAt(new Date().toISOString());
+        setToken(inquiryId);
         setFetched(true);
         return;
       }
@@ -113,6 +115,7 @@ const IssuedCredential = () => {
         }
 
         setIssuedAt(new Date().toISOString());
+        setToken(inquiryId);
       } catch (err) {
         console.error("Failed to fetch Persona inquiry:", err);
         setFetchError(true);
@@ -124,6 +127,7 @@ const IssuedCredential = () => {
           setLocationValue("Unknown");
         }
         setIssuedAt(new Date().toISOString());
+        setToken(inquiryId);
       } finally {
         setFetched(true);
       }
@@ -144,13 +148,13 @@ const IssuedCredential = () => {
         clearInterval(interval);
         setDone(true);
         setTimeout(() => {
-          window.location.href = "/?screen=3";
+          setCurrentScreen(3);
         }, 1500);
       }
     }, 800);
 
     return () => clearInterval(interval);
-  }, [steps.length]);
+  }, [steps.length, inquiryId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Empty state — no credential yet
   if (!state.token && !state.name) {
