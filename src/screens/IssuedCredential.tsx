@@ -31,6 +31,7 @@ const formatAgeDisplay = (ageVerified: string) => {
 const IssuedCredential = () => {
   const {
     state,
+    setCurrentScreen,
     setName,
     setCountry,
     setIssuedAt,
