@@ -126,7 +126,7 @@ const HomePage = () => {
                         <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
                           <ShieldCheck className="text-primary" size={14} />
                         </div>
-                        <span className="text-xs font-bold text-white font-display">TruVy Passport</span>
+                        <span className="text-xs font-bold text-white font-display"><TruVyLogo size="sm" className="[&_span]:text-white/90 [&_.text-foreground]:text-white/90" /> Passport</span>
                       </div>
                       <CheckCircle2 className="text-primary" size={18} />
                     </div>
