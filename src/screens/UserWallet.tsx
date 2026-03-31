@@ -58,7 +58,10 @@ const UserWallet = () => {
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-        <h1 className="text-3xl font-bold font-display text-foreground mb-2">Your TruVy Wallet</h1>
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <TruVyLogo size="md" />
+          <h1 className="text-3xl font-bold font-display text-foreground">Wallet</h1>
+        </div>
         <p className="text-muted-foreground">Your verified credentials, ready to share with any institution worldwide</p>
       </motion.div>
 
