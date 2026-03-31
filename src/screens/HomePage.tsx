@@ -378,6 +378,29 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* ─── TESTIMONIAL ─── */}
+      <section style={{ background: "#0a0a0a" }}>
+        <div className="max-w-4xl mx-auto px-6 py-28">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={scaleIn}
+            className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] p-10 md:p-14 text-center"
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/10 blur-[80px] pointer-events-none" />
+            <div className="relative z-10">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
+                alt="Maria S."
+                className="w-16 h-16 rounded-full object-cover mx-auto mb-6 border-2 border-primary/30"
+                loading="lazy"
+              />
+              <p className="text-xl md:text-2xl italic text-primary/80 leading-relaxed max-w-2xl mx-auto mb-6 font-display">
+                "I verified once with Nubank in Brazil. Six months later, Bank of America approved me in 2 minutes."
+              </p>
+              <p className="text-sm text-white/40 font-medium">— Maria S., USF International Student</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── MARIA'S STORY ─── */}
       <section style={{ background: "#0f0f0f" }}>
         <div className="max-w-7xl mx-auto px-6 py-28">
@@ -405,29 +428,6 @@ const HomePage = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ─── TESTIMONIAL ─── */}
-      <section style={{ background: "#0a0a0a" }}>
-        <div className="max-w-4xl mx-auto px-6 py-28">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={scaleIn}
-            className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] p-10 md:p-14 text-center"
-          >
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/10 blur-[80px] pointer-events-none" />
-            <div className="relative z-10">
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
-                alt="Maria S."
-                className="w-16 h-16 rounded-full object-cover mx-auto mb-6 border-2 border-primary/30"
-                loading="lazy"
-              />
-              <p className="text-xl md:text-2xl italic text-primary/80 leading-relaxed max-w-2xl mx-auto mb-6 font-display">
-                "I verified once with Nubank in Brazil. Six months later, Bank of America approved me in 2 minutes."
-              </p>
-              <p className="text-sm text-white/40 font-medium">— Maria S., USF International Student</p>
-            </div>
-          </motion.div>
         </div>
       </section>
 
