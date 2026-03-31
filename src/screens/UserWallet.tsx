@@ -19,9 +19,8 @@ const UserWallet = () => {
   const { toast } = useToast();
   const { state, setCurrentScreen } = useTruvy();
 
-  const handleShare = () => {
-    toast({ title: "Credential shared securely", description: "No raw documents transmitted." });
-  };
+
+
 
   // Empty state
   if (!state.token && !state.name && state.credentials.length === 0) {
