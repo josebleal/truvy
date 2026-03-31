@@ -23,9 +23,7 @@ const TopNav = () => {
             onClick={() => setCurrentScreen(0)}
             className="shrink-0 hover:opacity-80 transition-opacity flex items-center"
           >
-            <span className="text-xl font-black font-display tracking-tight text-foreground">
-              TRU<span className="text-primary">✓</span>Y
-            </span>
+            <TruVyLogo size="sm" />
           </button>
 
           <div className="h-5 w-px bg-border/50 hidden sm:block" />
