@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck, X, Check, Mail, Globe2, User, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import TruVyLogo from "@/components/TruVyLogo";
+import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
