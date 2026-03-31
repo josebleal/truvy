@@ -6,16 +6,14 @@ interface TruVyLogoProps {
 }
 
 const TruVyLogo = ({ size = "md", className }: TruVyLogoProps) => {
-  const sizeMap = {
-    sm: "text-base",
-    md: "text-xl",
-    lg: "text-3xl",
-  };
+  const heightMap = { sm: "h-7", md: "h-9", lg: "h-12" };
   return (
     <span className={cn("inline-flex items-center", className)}>
-      <span className={cn("font-black font-display tracking-tight text-foreground", sizeMap[size])}>
-        TRU<span className="text-primary">✓</span>Y
-      </span>
+      <img
+        src="/lovable-uploads/2cb727b8-1240-4ef8-9278-db721cc38728.png"
+        alt="TruVy"
+        className={cn("w-auto object-contain rounded-md", heightMap[size])}
+      />
     </span>
   );
 };

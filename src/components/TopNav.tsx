@@ -1,7 +1,6 @@
 import { useTruvy } from "@/context/TruvyContext";
-import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
-import { Home, ScanLine, BadgeCheck, Wallet, Sun, Moon } from "lucide-react";
+import { Home, ScanLine, BadgeCheck, Wallet } from "lucide-react";
 import TruVyLogo from "@/components/TruVyLogo";
 
 const tabs = [
@@ -13,7 +12,6 @@ const tabs = [
 
 const TopNav = () => {
   const { state, setCurrentScreen } = useTruvy();
-  const { isDark, toggleTheme } = useTheme();
 
   return (
     <nav className="w-full border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
@@ -49,14 +47,6 @@ const TopNav = () => {
               );
             })}
           </div>
-
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
         </div>
       </div>
 
