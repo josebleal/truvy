@@ -234,9 +234,21 @@ const IssuedCredential = () => {
           ))}
         </div>
 
-        <div className="text-center">
-          <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
-            Verify Another Document →
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            onClick={() => setCurrentScreen(3)}
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 text-base font-semibold rounded-xl"
+          >
+            View My Wallet →
+          </Button>
+          <Button
+            onClick={() => setCurrentScreen(1)}
+            size="lg"
+            variant="outline"
+            className="px-8 text-base font-semibold rounded-xl"
+          >
+            Verify Another Document
           </Button>
         </div>
       </div>
