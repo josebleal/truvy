@@ -180,9 +180,6 @@ const IssuedCredential = () => {
       } else {
         clearInterval(interval);
         setDone(true);
-        setTimeout(() => {
-          setCurrentScreen(3);
-        }, 1500);
       }
     }, 800);
 
