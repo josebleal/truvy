@@ -6,6 +6,9 @@ import { ArrowRight, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck, X, Ch
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import TruVyLogo from "@/components/TruVyLogo";
+import bankImage from "@/assets/truvy_bank_image.png";
+import issuerImage from "@/assets/truvy_identity_issuer_image.png";
+import customerImage from "@/assets/truvy_customer_image.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -334,21 +337,21 @@ const HomePage = () => {
                 title: "Banks & Financial Institutions",
                 desc: "Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials and eliminate redundant KYC checks.",
                 tags: ["Faster Onboarding", "Lower KYC Costs", "Higher Conversion"],
-                img: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=400&q=80",
+                img: bankImage,
               },
               {
                 icon: BadgeCheck,
                 title: "Identity Issuers",
                 desc: "Become a trusted credential issuer on the TruVy network. Sign portable credentials that any bank worldwide can verify instantly.",
                 tags: ["Issue Credentials", "Network Revenue", "Global Reach"],
-                img: "https://images.unsplash.com/photo-1620714223084-8fcacc2dbe3d?w=400&q=80",
+                img: issuerImage,
               },
               {
                 icon: User,
                 title: "Individuals & Expats",
                 desc: "Verify once with a trusted issuer and reuse your credential at any bank worldwide — no repeated document uploads, no friction.",
                 tags: ["One-Time Verification", "Global Portability", "Privacy First"],
-                img: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80",
+                img: customerImage,
               },
             ].map((item, i) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} custom={i} variants={fadeUp}
