@@ -82,10 +82,7 @@ const UserWallet = () => {
             }} />
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-                  <Shield className="text-primary" size={16} />
-                </div>
-                <span className="text-white/90 font-bold text-sm tracking-wide">TruVy</span>
+                <TruVyLogo size="sm" className="[&_span]:text-white/90 [&_.text-foreground]:text-white/90" />
               </div>
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-medium">KYC Credential</span>
             </div>
