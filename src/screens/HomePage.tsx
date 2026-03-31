@@ -283,7 +283,7 @@ const HomePage = () => {
         {/* Background photo with overlay */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1400&q=80"
+            src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=1400&q=80"
             alt=""
             className="w-full h-full object-cover opacity-[0.07]"
             loading="lazy"
