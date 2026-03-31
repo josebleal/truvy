@@ -44,12 +44,12 @@ const staggerItemSlow = {
 };
 
 const marqueeItems = [
-  "22M+ Identities Verified",
-  "< 30s Verification Time",
+  "< 30s Re-Verification with TruVy",
+  "~$20 Saved Per Customer",
   "RSA-2048 Encrypted",
   "W3C VC Standard",
   "Zero Raw Documents Transmitted",
-  "Global KYC Network",
+  "~$4M Estimated Annual Bank Savings",
 ];
 
 const HomePage = () => {
@@ -185,48 +185,41 @@ const HomePage = () => {
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} variants={fadeUp}
             className="text-5xl md:text-7xl font-bold font-display text-white leading-tight mb-4"
           >
-            50 out of 100 users
+             55% of digital account applications are abandoned
           </motion.h2>
           <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2} variants={fadeUp}
             className="text-xl md:text-2xl text-white/40 max-w-2xl mx-auto mb-16"
           >
-            abandon onboarding because of repetitive KYC
+            — with 43% dropping off specifically at the identity verification step
           </motion.p>
 
-          {/* Comparison bars */}
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} variants={fadeUp}
-            className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={3}
+            variants={fadeUp}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto"
           >
-            <div className="text-left">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-semibold text-white/60">Traditional KYC</span>
-                <span className="text-sm text-white/40">11 min · 73% completion</span>
-              </div>
-              <div className="h-3 rounded-full bg-white/10 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "73%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 0.5 }}
-                  className="h-full rounded-full bg-destructive/70"
-                />
-              </div>
-            </div>
-            <div className="text-left">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-semibold text-white/60">TruVy</span>
-                <span className="text-sm text-primary/80">28 sec · 97% completion</span>
-              </div>
-              <div className="h-3 rounded-full bg-white/10 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "97%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 0.7 }}
-                  className="h-full rounded-full bg-primary"
-                />
-              </div>
-            </div>
+            {[
+              { value: "5–10 min", label: "Average time per digital onboarding at US banks" },
+              { value: "~$80", label: "Average KYC cost per retail customer at US banks" },
+              { value: "55%", label: "Of digital account applications abandoned" },
+              { value: "$16M", label: "Estimated annual KYC spend per mid-sized US bank" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.value}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i + 4}
+                variants={fadeUp}
+                className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 text-center"
+              >
+                <p className="text-3xl md:text-4xl font-black font-display text-white mb-2">{stat.value}</p>
+                <p className="text-xs text-white/40 leading-relaxed">{stat.label}</p>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -476,7 +469,7 @@ const HomePage = () => {
                 <Check size={18} className="text-primary" /> TruVy
               </h3>
               <div className="space-y-3">
-                {["Verify Once", "Receive TruVy Credential", "Share with Any Bank Instantly"].map((step) => (
+                {["< 30 sec to re-verify — down from 2–4 min per customer", "~$20 saved per customer vs. manual re-verification", "~$4M estimated annual savings per mid-sized US bank"].map((step) => (
                   <motion.div key={step} variants={staggerItemSlow}
                     className="flex items-center gap-3 p-3 rounded-lg bg-primary/[0.06] border border-primary/10"
                   >
