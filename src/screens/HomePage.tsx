@@ -238,7 +238,7 @@ const HomePage = () => {
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={scaleIn}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-primary/10">
                 <img
-                  src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1633265486064-086b219458ec?w=800&q=80"
                   alt="Person verifying identity on phone"
                   className="w-full h-[400px] object-cover"
                   loading="lazy"
