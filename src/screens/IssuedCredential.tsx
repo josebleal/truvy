@@ -320,8 +320,8 @@ const IssuedCredential = () => {
         className="card-surface rounded-xl p-6 mb-6 space-y-4"
       >
         <div className="flex items-center gap-3 mb-4">
-          <ShieldCheck className="text-primary" size={20} />
-          <h3 className="text-lg font-semibold text-foreground">TruVy Digital Passport</h3>
+          <TruVyLogo size="sm" />
+          <h3 className="text-lg font-semibold text-foreground">Digital Passport</h3>
         </div>
         <div className="space-y-3 text-sm">
           {[
