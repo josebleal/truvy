@@ -44,12 +44,12 @@ const staggerItemSlow = {
 };
 
 const marqueeItems = [
-  "22M+ Identities Verified",
-  "< 30s Verification Time",
+  "< 30s Re-Verification with TruVy",
+  "~$20 Saved Per Customer",
   "RSA-2048 Encrypted",
   "W3C VC Standard",
   "Zero Raw Documents Transmitted",
-  "Global KYC Network",
+  "~$4M Estimated Annual Bank Savings",
 ];
 
 const HomePage = () => {
