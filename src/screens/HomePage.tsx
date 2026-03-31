@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, ShieldCheck, Globe, Zap, Lock, Building2, BadgeCheck, X, Check, Mail, Globe2, User, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import TruVyLogo from "@/components/TruVyLogo";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -123,7 +124,7 @@ const HomePage = () => {
                         <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
                           <ShieldCheck className="text-primary" size={14} />
                         </div>
-                        <span className="text-xs font-bold text-white font-display">TruVy Passport</span>
+                        <span className="text-xs font-bold text-white font-display"><TruVyLogo size="sm" className="[&_span]:text-white/90 [&_.text-foreground]:text-white/90" /> Passport</span>
                       </div>
                       <CheckCircle2 className="text-primary" size={18} />
                     </div>
@@ -235,7 +236,7 @@ const HomePage = () => {
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={scaleIn}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-primary/10">
                 <img
-                  src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1633265486064-086b219458ec?w=800&q=80"
                   alt="Person verifying identity on phone"
                   className="w-full h-[400px] object-cover"
                   loading="lazy"
@@ -280,7 +281,7 @@ const HomePage = () => {
         {/* Background photo with overlay */}
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1400&q=80"
+            src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=1400&q=80"
             alt=""
             className="w-full h-full object-cover opacity-[0.07]"
             loading="lazy"
@@ -333,21 +334,21 @@ const HomePage = () => {
                 title: "Banks & Financial Institutions",
                 desc: "Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials and eliminate redundant KYC checks.",
                 tags: ["Faster Onboarding", "Lower KYC Costs", "Higher Conversion"],
-                img: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80",
+                img: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=400&q=80",
               },
               {
                 icon: BadgeCheck,
                 title: "Identity Issuers",
                 desc: "Become a trusted credential issuer on the TruVy network. Sign portable credentials that any bank worldwide can verify instantly.",
                 tags: ["Issue Credentials", "Network Revenue", "Global Reach"],
-                img: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=400&q=80",
+                img: "https://images.unsplash.com/photo-1620714223084-8fcacc2dbe3d?w=400&q=80",
               },
               {
                 icon: User,
                 title: "Individuals & Expats",
                 desc: "Verify once with a trusted issuer and reuse your credential at any bank worldwide — no repeated document uploads, no friction.",
                 tags: ["One-Time Verification", "Global Portability", "Privacy First"],
-                img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80",
+                img: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80",
               },
             ].map((item, i) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} custom={i} variants={fadeUp}
