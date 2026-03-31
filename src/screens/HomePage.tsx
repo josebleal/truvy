@@ -337,7 +337,7 @@ const HomePage = () => {
                 title: "Banks & Financial Institutions",
                 desc: "Reduce onboarding time from 11 minutes to seconds. Accept pre-verified credentials and eliminate redundant KYC checks.",
                 tags: ["Faster Onboarding", "Lower KYC Costs", "Higher Conversion"],
-                img: "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=400&q=80",
+                img: bankImage,
               },
               {
                 icon: BadgeCheck,
