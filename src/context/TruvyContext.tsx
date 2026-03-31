@@ -50,7 +50,7 @@ const initialState: TruvyState = {
   qrBase64: "",
   currentScreen: 0,
   issuedAt: "",
-  documentType: "passport",
+  documentType: "driver_license",
   locationLabel: "Document Country",
   locationValue: "",
   ageVerified: "",

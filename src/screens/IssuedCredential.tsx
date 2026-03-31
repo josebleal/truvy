@@ -352,7 +352,20 @@ const IssuedCredential = () => {
         </pre>
       </motion.div>
 
-      <p className="text-center text-sm text-muted-foreground animate-pulse">Redirecting to wallet...</p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="flex justify-center"
+      >
+        <Button
+          size="lg"
+          onClick={() => setCurrentScreen(3)}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 text-base font-semibold rounded-xl"
+        >
+          View My Wallet →
+        </Button>
+      </motion.div>
     </div>
   );
 };
