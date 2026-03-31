@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Lock, Wallet, Shield } from "lucide-react";
+import { CheckCircle, Lock, Wallet } from "lucide-react";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { useTruvy } from "@/context/TruvyContext";
