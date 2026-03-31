@@ -351,7 +351,7 @@ const HomePage = () => {
                 title: "Individuals & Expats",
                 desc: "Verify once with a trusted issuer and reuse your credential at any bank worldwide — no repeated document uploads, no friction.",
                 tags: ["One-Time Verification", "Global Portability", "Privacy First"],
-                img: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&q=80",
+                img: customerImage,
               },
             ].map((item, i) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} custom={i} variants={fadeUp}
