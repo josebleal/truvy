@@ -42,7 +42,7 @@ const UserWallet = () => {
   const displayName = cred0?.name || state.name || "Verified User";
   const displayCountry = cred0?.country || state.locationValue || state.country || "Unknown";
   const rawDocType = cred0?.documentType || state.documentType;
-  const displayDocType = rawDocType === "driver_license" ? "Driver's License" : "Passport";
+  const displayDocType = rawDocType === "passport" ? "Passport" : "Driver's License";
   const rawAge = cred0?.ageVerified || state.ageVerified;
   const displayAge = rawAge === "21+" || rawAge === "18+" ? `${rawAge} ✅` : rawAge === "under18" ? "Under 18 ❌" : "—";
 
