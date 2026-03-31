@@ -12,7 +12,6 @@ const tabs = [
 
 const TopNav = () => {
   const { state, setCurrentScreen } = useTruvy();
-  const { isDark, toggleTheme } = useTheme();
 
   return (
     <nav className="w-full border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
