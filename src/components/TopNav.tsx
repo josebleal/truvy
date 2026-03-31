@@ -2,6 +2,7 @@ import { useTruvy } from "@/context/TruvyContext";
 import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
 import { Home, ScanLine, BadgeCheck, Wallet, Sun, Moon } from "lucide-react";
+import TruVyLogo from "@/components/TruVyLogo";
 
 const tabs = [
   { label: "Home", icon: Home },

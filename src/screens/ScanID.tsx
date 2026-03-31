@@ -4,8 +4,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 
 const providers = [
-  { name: "Persona", logo: "https://logo.clearbit.com/withpersona.com", functional: true },
-  { name: "Jumio", logo: "https://logo.clearbit.com/jumio.com", comingSoon: true },
+  { name: "Persona 🇺🇸", logo: "https://logo.clearbit.com/withpersona.com", functional: true },
+  { name: "Jumio 🇺🇸", logo: "https://logo.clearbit.com/jumio.com", comingSoon: true },
   { name: "Legitimuz 🇧🇷", logo: "https://logo.clearbit.com/legitimuz.com", comingSoon: true },
   { name: "Nubank 🇧🇷", logo: "https://logo.clearbit.com/nubank.com.br", comingSoon: true },
   { name: "Onfido 🇬🇧", logo: "https://logo.clearbit.com/onfido.com", comingSoon: true },
