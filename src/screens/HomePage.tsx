@@ -132,7 +132,7 @@ const HomePage = () => {
                       <CheckCircle2 className="text-primary" size={18} />
                     </div>
                     <div className="mb-4">
-                      <p className="text-white text-base font-bold font-display tracking-wide">JOHN DOE</p>
+                      <p className="text-white text-base font-bold font-display tracking-wide">JENSEN COONRADT</p>
                       <p className="text-primary text-[11px] font-semibold mt-1">Identity Verified</p>
                     </div>
                     <div className="space-y-2 text-[11px]">
