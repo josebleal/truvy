@@ -344,7 +344,7 @@ const HomePage = () => {
                 title: "Identity Issuers",
                 desc: "Become a trusted credential issuer on the TruVy network. Sign portable credentials that any bank worldwide can verify instantly.",
                 tags: ["Issue Credentials", "Network Revenue", "Global Reach"],
-                img: "https://images.unsplash.com/photo-1620714223084-8fcacc2dbe3d?w=400&q=80",
+                img: issuerImage,
               },
               {
                 icon: User,
