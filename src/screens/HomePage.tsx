@@ -469,7 +469,7 @@ const HomePage = () => {
                 <Check size={18} className="text-primary" /> TruVy
               </h3>
               <div className="space-y-3">
-                {["Verify Once", "Receive TruVy Credential", "Share with Any Bank Instantly"].map((step) => (
+                {["< 30 sec to re-verify — down from 2–4 min per customer", "~$20 saved per customer vs. manual re-verification", "~$4M estimated annual savings per mid-sized US bank"].map((step) => (
                   <motion.div key={step} variants={staggerItemSlow}
                     className="flex items-center gap-3 p-3 rounded-lg bg-primary/[0.06] border border-primary/10"
                   >
