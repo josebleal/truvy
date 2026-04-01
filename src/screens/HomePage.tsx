@@ -185,13 +185,23 @@ const HomePage = () => {
           <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} variants={fadeUp}
             className="text-5xl md:text-7xl font-bold font-display text-white leading-tight mb-4"
           >
-            50 out of 100 users
+            55 out of 100
           </motion.h2>
           <motion.p initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2} variants={fadeUp}
-            className="text-xl md:text-2xl text-white/40 max-w-2xl mx-auto mb-16"
+            className="text-xl md:text-2xl text-white/40 max-w-2xl mx-auto mb-8"
           >
-            abandon onboarding because of repetitive KYC
+            of retail banking digital account applications are abandoned during onboarding
           </motion.p>
+
+          {/* 43% callout */}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2.5} variants={fadeUp}
+            className="mx-auto mb-16 max-w-md"
+          >
+            <div className="border border-primary/30 bg-primary/5 rounded-2xl px-6 py-4 text-center">
+              <span className="text-3xl md:text-4xl font-bold font-display text-primary">43%</span>
+              <p className="text-sm text-white/50 mt-1">abandon during the ID verification step</p>
+            </div>
+          </motion.div>
 
           {/* Comparison bars */}
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} variants={fadeUp}
@@ -200,12 +210,12 @@ const HomePage = () => {
             <div className="text-left">
               <div className="flex justify-between mb-2">
                 <span className="text-sm font-semibold text-white/60">Traditional KYC</span>
-                <span className="text-sm text-white/40">11 min · 73% completion</span>
+                <span className="text-sm text-white/40">5-10 min · 45% completion</span>
               </div>
               <div className="h-3 rounded-full bg-white/10 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  whileInView={{ width: "73%" }}
+                  whileInView={{ width: "45%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.5 }}
                   className="h-full rounded-full bg-destructive/70"
@@ -214,18 +224,19 @@ const HomePage = () => {
             </div>
             <div className="text-left">
               <div className="flex justify-between mb-2">
-                <span className="text-sm font-semibold text-white/60">TruVy</span>
-                <span className="text-sm text-primary/80">28 sec · 97% completion</span>
+                <span className="text-sm font-semibold text-white/60">TruVy ID Verification</span>
+                <span className="text-sm text-primary/80">&lt;30 seconds</span>
               </div>
               <div className="h-3 rounded-full bg-white/10 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  whileInView={{ width: "97%" }}
+                  whileInView={{ width: "95%" }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.7 }}
                   className="h-full rounded-full bg-primary"
                 />
               </div>
+              <p className="text-xs text-white/30 mt-2">Reduces the 2-4 min ID verification step to under 30 seconds</p>
             </div>
           </motion.div>
         </div>
