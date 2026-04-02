@@ -330,7 +330,7 @@ const IssuedCredential = () => {
       >
         <div className="flex items-center gap-3 mb-4">
           <TruVyLogo size="sm" />
-          <h3 className="text-lg font-semibold text-foreground">Digital Passport</h3>
+          <h3 className="text-lg font-semibold text-foreground">KYC Credential</h3>
         </div>
         <div className="space-y-3 text-sm">
           {[
