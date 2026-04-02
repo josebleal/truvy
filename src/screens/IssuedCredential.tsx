@@ -305,7 +305,7 @@ const IssuedCredential = () => {
   const displayCountry = state.locationValue || state.country || "Unknown";
   const displayLocationLabel = state.locationLabel || "Country";
   const displayAgeVerified = state.ageVerified || "—";
-  const displayDocumentType = state.documentType === "driver_license" ? "Driver's License" : "Passport";
+  const displayDocumentType = state.documentType === "passport" ? "Passport" : "Driver's License";
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
