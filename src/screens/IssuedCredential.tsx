@@ -87,7 +87,7 @@ const IssuedCredential = () => {
           inquiryId,
           name: state.name || "Verified User",
           country: state.country || "Unknown",
-          documentType: "passport",
+          documentType: "driver_license",
           ageVerified: "",
           issuedAt: new Date().toISOString(),
           issuer: "Persona",
@@ -126,7 +126,7 @@ const IssuedCredential = () => {
           ?.find((item) => item.type === "verification/government-id");
         idClass = getString(govId?.attributes?.idClass) || "pp";
         if (idClass === "dl") setDocumentType("driver_license");
-        else setDocumentType("passport");
+        else setDocumentType("driver_license");
 
         const birthdate = getString(fields?.birthdate?.value);
         if (birthdate) {
@@ -155,7 +155,7 @@ const IssuedCredential = () => {
         inquiryId,
         name: fullName,
         country: countryCode,
-        documentType: idClass === "dl" ? "driver_license" : "passport",
+        documentType: idClass === "dl" ? "driver_license" : "driver_license",
         ageVerified: ageResult,
         issuedAt: new Date().toISOString(),
         issuer: "Persona",
@@ -218,7 +218,7 @@ const IssuedCredential = () => {
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-sm font-bold text-foreground font-display">
                     {cred.country?.toUpperCase() || "—"}{" "}
-                    {cred.documentType === "driver_license" ? "Driver's License" : "Passport"}
+                    {cred.documentType === "passport" ? "Passport" : "Driver's License"}
                     <span className="text-muted-foreground font-normal"> · {cred.issuer}</span>
                   </h3>
                 </div>
@@ -305,7 +305,7 @@ const IssuedCredential = () => {
   const displayCountry = state.locationValue || state.country || "Unknown";
   const displayLocationLabel = state.locationLabel || "Country";
   const displayAgeVerified = state.ageVerified || "—";
-  const displayDocumentType = state.documentType === "driver_license" ? "Driver's License" : "Passport";
+  const displayDocumentType = state.documentType === "passport" ? "Passport" : "Driver's License";
 
   return (
     <div className="max-w-2xl mx-auto py-16 px-4">
