@@ -548,9 +548,10 @@ const HomePage = () => {
                 className="flex min-h-[100px] w-full rounded-md border border-white/10 bg-white/[0.05] px-3 py-2 text-sm text-white ring-offset-background placeholder:text-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button type="submit" disabled className="w-full bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed">
               Send Message
             </Button>
+            <p className="text-xs text-muted-foreground text-center mt-2">Form submissions open after launch.</p>
           </motion.form>
         </div>
       </section>
