@@ -263,7 +263,7 @@ const IssuedCredential = () => {
           <Lock className="text-muted-foreground" size={28} />
         </div>
         <h2 className="text-2xl font-bold text-foreground font-display">Your Credential Awaits</h2>
-        <p className="text-muted-foreground max-w-sm">Complete your identity verification to receive your TruVy Digital Passport.</p>
+        <p className="text-muted-foreground max-w-sm">Complete your identity verification to receive your TruVy KYC Credential.</p>
         <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
           Start Verification →
         </Button>
@@ -319,7 +319,7 @@ const IssuedCredential = () => {
           <CheckCircle className="text-primary" size={40} />
         </div>
         <h1 className="text-3xl font-bold font-display text-foreground mb-2">Credential Issued!</h1>
-        <p className="text-muted-foreground">Your TruVy Digital Passport has been cryptographically signed.</p>
+        <p className="text-muted-foreground">Your TruVy KYC Credential has been cryptographically signed.</p>
       </motion.div>
 
       <motion.div
@@ -330,7 +330,7 @@ const IssuedCredential = () => {
       >
         <div className="flex items-center gap-3 mb-4">
           <TruVyLogo size="sm" />
-          <h3 className="text-lg font-semibold text-foreground">Digital Passport</h3>
+          <h3 className="text-lg font-semibold text-foreground">KYC Credential</h3>
         </div>
         <div className="space-y-3 text-sm">
           {[
