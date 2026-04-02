@@ -263,7 +263,7 @@ const IssuedCredential = () => {
           <Lock className="text-muted-foreground" size={28} />
         </div>
         <h2 className="text-2xl font-bold text-foreground font-display">Your Credential Awaits</h2>
-        <p className="text-muted-foreground max-w-sm">Complete your identity verification to receive your TruVy Digital Passport.</p>
+        <p className="text-muted-foreground max-w-sm">Complete your identity verification to receive your TruVy KYC Credential.</p>
         <Button onClick={() => setCurrentScreen(1)} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
           Start Verification →
         </Button>
