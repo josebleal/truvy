@@ -319,7 +319,7 @@ const IssuedCredential = () => {
           <CheckCircle className="text-primary" size={40} />
         </div>
         <h1 className="text-3xl font-bold font-display text-foreground mb-2">Credential Issued!</h1>
-        <p className="text-muted-foreground">Your TruVy Digital Passport has been cryptographically signed.</p>
+        <p className="text-muted-foreground">Your TruVy KYC Credential has been cryptographically signed.</p>
       </motion.div>
 
       <motion.div
