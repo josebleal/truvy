@@ -155,7 +155,7 @@ const IssuedCredential = () => {
         inquiryId,
         name: fullName,
         country: countryCode,
-        documentType: idClass === "dl" ? "driver_license" : "passport",
+        documentType: idClass === "dl" ? "driver_license" : "driver_license",
         ageVerified: ageResult,
         issuedAt: new Date().toISOString(),
         issuer: "Persona",
