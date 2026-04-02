@@ -87,7 +87,7 @@ const IssuedCredential = () => {
           inquiryId,
           name: state.name || "Verified User",
           country: state.country || "Unknown",
-          documentType: "passport",
+          documentType: "driver_license",
           ageVerified: "",
           issuedAt: new Date().toISOString(),
           issuer: "Persona",
