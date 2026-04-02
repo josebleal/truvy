@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import TruVyLogo from "@/components/TruVyLogo";
 import bankImage from "@/assets/truvy_bank_image.png";
 import issuerImage from "@/assets/truvy_identity_issuer_image.png";
+import truvyKycCard from "@/assets/truvy-kyc-card.png";
 import customerImage from "@/assets/truvy_customer_image.png";
 
 const fadeUp = {
