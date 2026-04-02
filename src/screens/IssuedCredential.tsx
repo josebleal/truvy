@@ -126,7 +126,7 @@ const IssuedCredential = () => {
           ?.find((item) => item.type === "verification/government-id");
         idClass = getString(govId?.attributes?.idClass) || "pp";
         if (idClass === "dl") setDocumentType("driver_license");
-        else setDocumentType("passport");
+        else setDocumentType("driver_license");
 
         const birthdate = getString(fields?.birthdate?.value);
         if (birthdate) {
