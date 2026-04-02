@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import TruVyLogo from "@/components/TruVyLogo";
 import bankImage from "@/assets/truvy_bank_image.png";
 import issuerImage from "@/assets/truvy_identity_issuer_image.png";
+import truvyKycCard from "@/assets/truvy-kyc-card.png";
 import customerImage from "@/assets/truvy_customer_image.png";
 
 const fadeUp = {
@@ -250,12 +251,11 @@ const HomePage = () => {
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} variants={scaleIn}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-primary/10">
                 <img
-                  src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&q=80"
-                  alt="Person verifying identity on phone"
-                  className="w-full h-[400px] object-cover"
+                  src={truvyKycCard}
+                  alt="TruVy KYC Credential Card"
+                  className="w-full object-contain"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
             </motion.div>
 
