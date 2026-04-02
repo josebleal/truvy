@@ -218,7 +218,7 @@ const IssuedCredential = () => {
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-sm font-bold text-foreground font-display">
                     {cred.country?.toUpperCase() || "—"}{" "}
-                    {cred.documentType === "driver_license" ? "Driver's License" : "Passport"}
+                    {cred.documentType === "passport" ? "Passport" : "Driver's License"}
                     <span className="text-muted-foreground font-normal"> · {cred.issuer}</span>
                   </h3>
                 </div>
